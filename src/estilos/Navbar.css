@@ -1,0 +1,167 @@
+/* General */
+.header {
+  background-color: #006DFF;
+  color: white;
+  padding: 1rem 1.5rem;
+  position: relative;
+  width: 100%;
+  z-index: 10;
+}
+
+.container-header {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* Logo */
+.logo img {
+  height: 60px;
+}
+
+/* Buscador escritorio */
+.search-box {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.search-box input {
+  border: none;
+  padding: 0.6rem 1rem;
+  outline: none;
+  font-size: 1rem;
+  flex: 1;
+}
+
+.search-box button {
+  background: #0056cc;
+  border: none;
+  color: white;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+}
+
+/* Acciones escritorio */
+.acciones {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.registro-link {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-btn {
+  background-color: #00c853;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Botón hamburguesa */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.menu-toggle span {
+  width: 25px;
+  height: 3px;
+  background: white;
+  border-radius: 2px;
+}
+
+/* Sidebar móvil */
+.sidebar-movil {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 300px;
+  height: 100vh;
+  background: #006DFF;
+  color: white;
+  z-index: 100;
+  transition: right 0.3s ease;
+  padding: 1.5rem;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-movil.activo {
+  right: 0;
+}
+
+.cerrar-menu {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: white;
+  cursor: pointer;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.sidebar-contenido {
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+}
+
+.logo-sidebar {
+  height: 60px;
+}
+
+.acciones-movil {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.nav-movil ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+
+.nav-movil ul li a {
+  color: white;
+  font-size: 1.1rem;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* Responsive helpers */
+.desktop-only {
+  display: flex;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: flex;
+  }
+}

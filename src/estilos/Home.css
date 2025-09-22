@@ -1,0 +1,260 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden; 
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #fff;
+}
+
+.home {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Hero */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  overflow: visible; /* <-- Esto permite que los indicadores se muestren */
+} 
+
+.carousel {
+  position: relative; /* Necesario para el posicionamiento absoluto de los hijos */
+  width: 100%;
+  height: 100%;
+}
+
+
+.carousel-item {
+  position: absolute; /* Todas las imágenes superpuestas */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+    z-index: 1;
+}
+
+
+.carousel-item.active {
+  opacity: 1;
+  z-index: 1; /* Garantiza que la activa quede arriba */
+}
+
+.carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(70%);
+}
+
+/* Texto dentro del carrusel SIN fondo negro */
+.hero-text {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%);
+  color: white;
+  text-align: left;
+  max-width: 500px;
+}
+
+.hero-text h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero-text p {
+  font-size: 1.1rem;
+}
+
+.hero-button {
+  margin-top: 1rem;
+  padding: 0.6rem 1.2rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.hero-button:hover {
+  background-color: #218838;
+}
+
+/* Indicadores estilo barra */
+.carousel-indicators {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 2; /* Asegura que esté por encima */
+}
+
+.indicator {
+  width: 35px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  /* transition: background 0.3s; */
+}
+.indicator.active {
+  background: #28a745;
+}
+
+/* Intro */
+.intro {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  max-width: 900px;
+  margin: 2rem auto;
+}
+
+/* Hospitales */
+.hospitales {
+  padding: 2rem;
+}
+.hospitales h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+}
+.card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+.card h3 {
+  margin: 1rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero {
+    height: 250px;
+  }
+  .hero-text {
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    max-width: 90%;
+  }
+  .hero-text h1 {
+    font-size: 1.4rem;
+  }
+  .hero-text p {
+    font-size: 0.9rem;
+  }
+  .hero-button {
+    font-size: 0.9rem;
+    padding: 0.4rem 1rem;
+  }
+}
+
+
+  .titulo {
+    padding: 1rem 3rem;            /* equivalente a py-3 px-5 */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .titulo h2 {
+    font-weight: bolder;
+    color: #000000;                /* similar a Bootstrap's text-secondary */
+    margin: 0;                     /* opcional, para control del espaciado */
+  }
+
+  .titulo .divider {
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: #6c757d;     /* o el color que quieras para la línea */
+    margin-top: 0.5rem;
+  }
+
+   .texto-titulo {
+    padding: 1rem 3rem;            /* igual a py-3 px-5 */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .texto-titulo h2 {
+    font-weight: bolder;
+    color: #6c757d;                /* similar a Bootstrap's text-secondary */
+    margin: 0;
+  }
+
+  .texto-titulo .divider {
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: #6c757d;
+    margin-top: 0.5rem;
+
+  }
+
+
+
+
+
+/* 
+  responsive indicador */
+
+
+  
+/* Tamaño reducido para tablet */
+@media (max-width: 1024px) {
+  .indicator {
+    width: 2rem;
+    height: 0.35rem;
+  }
+}
+
+/* Tamaño aún más reducido para móviles */
+@media (max-width: 768px) {
+  .indicator {
+    width: 1.5rem;
+    height: 0.3rem;
+  }
+}
+
+/* Muy pequeño (teléfonos pequeños) */
+@media (max-width: 480px) {
+  .indicator {
+    width: 1rem;
+    height: 0.25rem;
+  }
+}
