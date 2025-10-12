@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../estilos/comentarios.css";
+import "../estilos/Comentarios.css";
 import PuntuacionEstrellas from "./PuntuacionEstrellas";
 
 function ComentarioForm({ onAgregarComentario }) {

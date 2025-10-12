@@ -1,5 +1,5 @@
 import React from "react";
-import "../estilos/comentarios.css";
+import "../estilos/Comentarios.css";
 
 function ComentariosList({ comentarios }) {
   return (
