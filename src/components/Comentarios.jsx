@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import "../estilos/Comentarios.css";
+import "../estilos/comentarios.css";
 
 function Comentarios() {
   const [comentario, setComentario] = useState("");
