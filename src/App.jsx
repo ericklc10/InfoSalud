@@ -9,6 +9,11 @@ import HospitalAleman from "./pages/Hospitales/Aleman/HospitalAleman";
 import ScrollToTop from "./components/ScrollToTop";
 import Registro from "./pages/login/Registro";
 import Login from "./pages/login/Login";
+import RegistroHospital from "./pages/login/RegistroHospital";
+import HospitalPerfil from "./pages/Hospitales/HospitalPerfil";
+import EditarPerfilHospital from "./pages/Hospitales/EditarPerfilHospital";
+import HospitalPublico from "./pages/HospitalPublico";
+
 
 function App() {
   return (
@@ -25,6 +30,12 @@ function App() {
             <Route path="/hospital/aleman" element={<HospitalAleman />} />
             <Route path="/registro" element={<Registro />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/registro-hospital" element={<RegistroHospital />} />
+            <Route path="/hospital/:id" element={<HospitalPerfil />} />
+            <Route path="/editar-perfil-hospital" element={<EditarPerfilHospital />} />
+            <Route path="/hospital/:id" element={<HospitalPublico />} />
+
+
           </Routes>
         </main>
         <Footer />

@@ -1,5 +1,6 @@
 import React from "react";
 import "../estilos/Footer.css";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -11,7 +12,6 @@ function Footer() {
           <h4>InfoSalud+</h4>
           <ul>
             <li>Quiénes somos</li>
-           
             <li>Contacto</li>
             <li>Política de privacidad</li>
             <li>Términos y condiciones</li>
@@ -22,9 +22,12 @@ function Footer() {
         <div>
           <h4>Hospitales</h4>
           <ul>
-            <li>Únete a nosotros</li>
-            <li>Crear cuenta de hospital</li>
-        
+            <li>
+              <Link to="/registro-hospital">Únete a nosotros</Link>
+            </li>
+            <li>
+              <Link to="/registro-hospital">Crear cuenta de hospital</Link>
+            </li>
           </ul>
         </div>
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Auth.css";
 
-function Registro() {
+function RegistroHospital() {
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [contraseña, setContraseña] = useState("");
@@ -10,20 +10,25 @@ function Registro() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre, email, password: contraseña })
+        body: JSON.stringify({
+          nombre,
+          email,
+          password: contraseña
+        })
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("nombre", data.nombre); // 👈 guardar nombre
-        window.location.href = "/";
+        localStorage.setItem("hospital_id", data.id);
+        localStorage.setItem("tipo", "hospital");
+        localStorage.setItem("nombre", data.nombre);
+        window.location.href = `/hospital/${data.id}`;
       } else {
-        alert(data.message || "Error al registrar");
+        alert(data.message || "Error al registrar hospital");
       }
     } catch (err) {
       alert("No se pudo conectar con el servidor");
@@ -32,11 +37,11 @@ function Registro() {
 
   return (
     <div className="auth-container">
-      <h2>Crear cuenta</h2>
+      <h2>Crear cuenta de hospital</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Nombre completo"
+          placeholder="Nombre del hospital"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           required
@@ -55,11 +60,11 @@ function Registro() {
           onChange={(e) => setContraseña(e.target.value)}
           required
         />
-        <button type="submit">Registrarse</button>
+        <button type="submit">Registrarse como hospital</button>
       </form>
       <p>¿Ya tenés cuenta? <a href="/login">Iniciar sesión</a></p>
     </div>
   );
 }
 
-export default Registro;
+export default RegistroHospital;
