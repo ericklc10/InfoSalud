@@ -12,6 +12,9 @@ import Login from "./pages/login/Login";
 import RegistroHospital from "./pages/login/RegistroHospital";
 import HospitalPublico from "./pages/HospitalPublico";
 
+
+
+
 function App() {
   return (
     <Router>
@@ -31,7 +34,9 @@ function App() {
             <Route path="/hospital/favaloro" element={<HospitalFavaloro />} />
             <Route path="/hospital/garrahan" element={<HospitalGarrahan />} />
             <Route path="/hospital/aleman" element={<HospitalAleman />} />
-            <Route path="/hospital/:id" element={<HospitalPublico />} />
+        
+            <Route path="/hospitales/:id" element={<HospitalPublico />} />
+
           </Routes>
         </main>
         <Footer />

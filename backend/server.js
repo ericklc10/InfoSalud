@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
 import hospitalRoutes from './routes/hospitalRoutes.js';
 
+
 dotenv.config();
 
 const app = express();
@@ -21,3 +22,17 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
 });
+
+
+process.on("uncaughtException", (err) => {
+  console.error("Excepción no capturada:", err);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Promesa rechazada sin manejar:", reason);
+});
+
+
+
+
+console.log("✅ Rutas montadas: /api/auth, /api/hospital");

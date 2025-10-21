@@ -14,10 +14,10 @@ function Login() {
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ email, password: contraseña })
-});
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: contraseña })
+      });
 
       const data = await res.json();
 
@@ -25,9 +25,17 @@ function Login() {
         setMensaje(data.message);
         localStorage.setItem("token", data.token);
         localStorage.setItem("nombre", data.nombre);
+        localStorage.setItem("tipo", data.tipo);
+        localStorage.setItem("id", data.id);
 
+        // Redirigir según tipo
+        if (data.tipo === "hospital") {
+          window.location.href = "/";
 
-        window.location.href = "/";
+        } else {
+          window.location.href = "/";
+
+        }
       } else {
         setError(data.message || "Error al iniciar sesión");
       }

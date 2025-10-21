@@ -10,15 +10,17 @@ function RegistroHospital() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nombre,
-          email,
-          password: contraseña
-        })
-      });
+  const res = await fetch("http://localhost:4000/api/auth/register-hospital", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    nombre,
+    email,
+    password: contraseña
+  })
+});
+
+
 
       const data = await res.json();
 
@@ -26,7 +28,8 @@ function RegistroHospital() {
         localStorage.setItem("hospital_id", data.id);
         localStorage.setItem("tipo", "hospital");
         localStorage.setItem("nombre", data.nombre);
-        window.location.href = `/hospital/${data.id}`;
+        window.location.href = "/";
+
       } else {
         alert(data.message || "Error al registrar hospital");
       }
