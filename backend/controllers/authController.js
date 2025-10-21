@@ -1,80 +1,66 @@
-import bcrypt from 'bcrypt';
-import supabase from '../config/supabaseClient.js';
+import supabase from "../config/supabaseClient.js";
+import bcrypt from "bcrypt";
 
-// Registro de usuario
-export const registerUser = async (req, res) => {
-  const { nombre, email, password } = req.body;
-
-  try {
-    // Verificar si el email ya existe
-    const { data: existingUser, error: findError } = await supabase
-      .from('usuarios')
-      .select('email')
-      .eq('email', email)
-      .single();
-
-    if (findError && findError.code !== 'PGRST116') throw findError;
-    if (existingUser) {
-      return res.status(400).json({ message: 'El correo ya está registrado' });
-    }
-
-    // Encriptar contraseña
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Insertar nuevo usuario
-    const { data: insertedUser, error: insertError } = await supabase
-      .from('usuarios')
-      .insert([{
-        email,
-        password: hashedPassword,
-        nombre,
-        created_at: new Date().toISOString()
-      }])
-      .select()
-      .single(); // 👈 para obtener el usuario insertado
-
-    if (insertError) throw insertError;
-
-    return res.status(201).json({
-      message: 'Usuario registrado con éxito',
-      token: 'fake-jwt-token',
-      nombre: insertedUser.nombre
-    });
-  } catch (err) {
-    console.error('Error en registro:', err);
-    return res.status(500).json({ message: err.message || 'Error al registrar usuario' });
-  }
-};
-
-// Login de usuario
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const { data: user, error: fetchError } = await supabase
-      .from('usuarios')
-      .select('*')
-      .eq('email', email)
+    const { data, error } = await supabase
+      .from("usuarios")
+      .select("*")
+      .eq("email", email)
       .single();
 
-    if (fetchError) throw fetchError;
-    if (!user) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
+    if (error || !data) {
+      return res.status(401).json({ message: "Usuario no encontrado" });
     }
 
-    const match = await bcrypt.compare(password, user.password);
-
+    const match = await bcrypt.compare(password, data.password);
     if (!match) {
-      return res.status(401).json({ message: 'Contraseña incorrecta' });
+      return res.status(401).json({ message: "Contraseña incorrecta" });
     }
 
-    return res.status(200).json({
-      message: 'Login exitoso',
-      token: 'fake-jwt-token',
-      nombre: user.nombre
-    });
+    const token = "token_simulado_" + data.id;
+
+    res.status(200).json({
+  message: "Inicio de sesión exitoso",
+  token,
+  nombre: data.nombres // 👈 si en Supabase el campo se llama "nombres"
+});
+
   } catch (err) {
-    console.error('Error en login:', err);
-    return res.status(500).json({ message: err.message || 'Error al iniciar sesión' });
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
+};
+
+/////////////////////////
+
+export const registerUser = async (req, res) => {
+  const { nombre, email, password } = req.body;
+
+  try {
+    if (!nombre || !email || !password) {
+      return res.status(400).json({ message: "Faltan campos obligatorios" });
+    }
+
+    const hash = await bcrypt.hash(password, 10);
+
+    const { data, error } = await supabase
+      .from("usuarios")
+      .insert([{ nombre, email, password: hash }])
+
+      .select();
+
+    if (error) throw error;
+
+    const token = "token_simulado_" + data[0].id;
+res.status(201).json({
+  message: "Usuario registrado",
+  token,
+  nombre: data[0].nombre
+});
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };

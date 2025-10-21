@@ -6,6 +6,8 @@ import EspecialidadesCard from "../../../components/EspecialidadesCard";
 import ComentariosList from "../../../components/ComentariosList";
 import ComentarioForm from "../../../components/ComentarioForm";
 
+
+
 function HospitalItaliano() {
   const [comentarios, setComentarios] = useState([
     { autor: "María", texto: "Excelente atención y trato humano.", puntuacion: 5 },

@@ -13,18 +13,20 @@ function Login() {
     setMensaje("");
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password: contraseña })
-      });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email, password: contraseña })
+});
 
       const data = await res.json();
 
       if (res.ok) {
         setMensaje(data.message);
         localStorage.setItem("token", data.token);
-        localStorage.setItem("nombre", data.nombre); // 👈 guardar nombre solo si login fue exitoso
+        localStorage.setItem("nombre", data.nombre);
+
+
         window.location.href = "/";
       } else {
         setError(data.message || "Error al iniciar sesión");

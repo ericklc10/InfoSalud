@@ -10,32 +10,28 @@ import ScrollToTop from "./components/ScrollToTop";
 import Registro from "./pages/login/Registro";
 import Login from "./pages/login/Login";
 import RegistroHospital from "./pages/login/RegistroHospital";
-import HospitalPerfil from "./pages/Hospitales/HospitalPerfil";
-import EditarPerfilHospital from "./pages/Hospitales/EditarPerfilHospital";
 import HospitalPublico from "./pages/HospitalPublico";
-
 
 function App() {
   return (
     <Router>
       <ScrollToTop />
       <div className="app-layout">
-        <Navbar />  
+        <Navbar />
         <main className="main-content">
           <Routes>
+            {/* Rutas públicas */}
             <Route path="/" element={<Home />} />
+            <Route path="/registro" element={<Registro />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/registro-hospital" element={<RegistroHospital />} />
+
+            {/* Hospitales visibles sin autenticación */}
             <Route path="/hospital/italiano" element={<HospitalItaliano />} />
             <Route path="/hospital/favaloro" element={<HospitalFavaloro />} />
             <Route path="/hospital/garrahan" element={<HospitalGarrahan />} />
             <Route path="/hospital/aleman" element={<HospitalAleman />} />
-            <Route path="/registro" element={<Registro />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/registro-hospital" element={<RegistroHospital />} />
-            <Route path="/hospital/:id" element={<HospitalPerfil />} />
-            <Route path="/editar-perfil-hospital" element={<EditarPerfilHospital />} />
             <Route path="/hospital/:id" element={<HospitalPublico />} />
-
-
           </Routes>
         </main>
         <Footer />

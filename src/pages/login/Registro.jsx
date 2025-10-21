@@ -10,11 +10,12 @@ function Registro() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre, email, password: contraseña })
-      });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ nombre, email, password: contraseña })
+});
+
 
       const data = await res.json();
 

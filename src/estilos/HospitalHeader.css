@@ -1,16 +1,27 @@
 .hospital-header {
-  /* text-align: center; */
   margin: 2rem 0;
   padding: 1rem 0;
 }
 
+/* Contenedor del título y botón */
+.hospital-header .header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* ✅ permite que se acomode en mobile */
+  gap: 10px;
+}
+
+/* Título del hospital */
 .hospital-header h1 {
   font-size: 2.5rem;
   font-weight: 700;
   color: #2c3e50;
-  margin-bottom: 0.5rem;
+  margin: 0;
+  flex-grow: 1;
 }
 
+/* Descripción y rating */
 .hospital-header p {
   font-size: 1.2rem;
   color: #555;
@@ -23,6 +34,7 @@
   font-size: 1.1rem;
 }
 
+/* Línea decorativa */
 .hospital-header .divider {
   display: block;
   width: 80px;
@@ -40,5 +52,14 @@
 
   .hospital-header p {
     font-size: 1rem;
+  }
+
+  .hospital-header .header-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hospital-header .boton-seguir {
+    align-self: flex-end;
   }
 }
