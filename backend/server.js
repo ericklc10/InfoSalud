@@ -16,7 +16,7 @@ const app = express();
 
 // ✅ Habilitar CORS para Netlify
 app.use(cors({
-  origin: "https://ornate-nougat-270ccd.netlify.app/", // reemplazá con tu URL real
+  origin: "https://690231663f76e5dd9b96dfe7--ornate-nougat-270ccd.netlify.app/", // reemplazá con tu URL real
   credentials: true
 }));
 
