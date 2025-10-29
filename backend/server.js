@@ -40,3 +40,8 @@ process.on("unhandledRejection", (reason, promise) => {
 });
 
 console.log("✅ Rutas montadas: /api/auth, /api/hospital, /api/usuarios");
+
+
+app.get("/", (req, res) => {
+  res.send("Backend InfoSalud+ está corriendo 🚀");
+});
