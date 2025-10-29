@@ -16,7 +16,7 @@ const app = express();
 
 // ✅ Habilitar CORS para Netlify
 app.use(cors({
-  origin: "https://infosalud-frontend.netlify.app", // reemplazá con tu URL real
+  origin: "https://ornate-nougat-270ccd.netlify.app/", // reemplazá con tu URL real
   credentials: true
 }));
 
