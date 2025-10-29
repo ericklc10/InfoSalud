@@ -1,13 +1,11 @@
-import React, { useState } from "react";
-import "../estilos/PuntuacionEstrellas.css"; // Opcional para estilos
+import React from "react";
+import "../estilos/PuntuacionEstrellas.css";
 
-function PuntuacionEstrellas({ onChange }) {
-  const [puntuacion, setPuntuacion] = useState(0);
-  const [hover, setHover] = useState(0);
+function PuntuacionEstrellas({ puntuacion, onChange }) {
+  const [hover, setHover] = React.useState(0);
 
   const manejarClick = (valor) => {
-    setPuntuacion(valor);
-    if (onChange) onChange(valor); // Para enviar el valor al padre si lo necesitas
+    if (onChange) onChange(valor);
   };
 
   return (
@@ -25,7 +23,7 @@ function PuntuacionEstrellas({ onChange }) {
           ★
         </span>
       ))}
-      {puntuacion > 0 && <span className="valor"> {puntuacion} / 5</span>}
+      {puntuacion > 0 && <span className="valor">{puntuacion} / 5</span>}
     </div>
   );
 }

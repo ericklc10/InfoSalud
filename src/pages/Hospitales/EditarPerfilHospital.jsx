@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import "../../estilos/EditarPerfilHospital.css";
-
 
 function EditarPerfilHospital() {
   const navigate = useNavigate();
   const hospitalId = localStorage.getItem("hospital_id");
 
-  const [hospital, setHospital] = useState(null);
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
+  const [ubicacion, setUbicacion] = useState("");
   const [especialidades, setEspecialidades] = useState([]);
-  const [imagen, setImagen] = useState(null);
+  const [imagenUrl, setImagenUrl] = useState("");
 
   useEffect(() => {
     if (!hospitalId) return navigate("/");
@@ -21,10 +19,11 @@ function EditarPerfilHospital() {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${hospitalId}`);
         const data = await res.json();
-        setHospital(data);
-        setNombre(data.nombre);
-        setDescripcion(data.descripcion);
+        setNombre(data.nombre || "");
+        setDescripcion(data.descripcion || "");
+        setUbicacion(data.ubicacion || "");
         setEspecialidades(data.especialidades || []);
+        setImagenUrl(data.imagen_url || "");
       } catch (err) {
         console.error("Error al cargar hospital:", err);
       }
@@ -49,22 +48,25 @@ function EditarPerfilHospital() {
   };
 
   const handleGuardar = async () => {
-    const formData = new FormData();
-    formData.append("nombre", nombre);
-    formData.append("descripcion", descripcion);
-    formData.append("especialidades", JSON.stringify(especialidades));
-    if (imagen) formData.append("imagen", imagen);
+    const payload = {
+      nombre,
+      descripcion,
+      ubicacion,
+      imagen_url: imagenUrl,
+      especialidades
+    };
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${hospitalId}`, {
         method: "PUT",
-        body: formData
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
       });
 
       const data = await res.json();
       if (res.ok) {
         alert("Perfil actualizado con éxito");
-        navigate(`/hospital/${hospitalId}`);
+        navigate(`/hospitales/${hospitalId}`);
       } else {
         alert(data.message || "Error al guardar cambios");
       }
@@ -75,13 +77,20 @@ function EditarPerfilHospital() {
 
   return (
     <div className="editar-perfil">
-      <h2>Editar perfil</h2>
+      <h2>Editar perfil del hospital</h2>
 
       <label>Nombre</label>
       <input value={nombre} onChange={(e) => setNombre(e.target.value)} />
 
       <label>Descripción</label>
       <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
+
+      <label>Ubicación (iframe de Google Maps)</label>
+      <input
+        value={ubicacion}
+        onChange={(e) => setUbicacion(e.target.value)}
+        placeholder="https://www.google.com/maps/embed?pb=..."
+      />
 
       <label>Especialidades</label>
       {especialidades.map((esp, index) => (
@@ -106,8 +115,13 @@ function EditarPerfilHospital() {
       ))}
       <button onClick={handleAddEspecialidad}>➕ Agregar especialidad</button>
 
-      <label>Imagen de portada</label>
-      <input type="file" onChange={(e) => setImagen(e.target.files[0])} />
+      <label>Imagen de portada (URL)</label>
+      <input
+        type="text"
+        value={imagenUrl}
+        onChange={(e) => setImagenUrl(e.target.value)}
+        placeholder="https://ejemplo.com/banner.jpg"
+      />
 
       <button className="guardar-btn" onClick={handleGuardar}>Guardar cambios</button>
     </div>

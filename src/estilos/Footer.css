@@ -18,12 +18,14 @@
   border-bottom: 2px solid #f4d35e;
   display: inline-block;
   padding-bottom: 5px;
+  
 }
 
 .footer ul {
   list-style: none;
   padding: 0;
   margin: 0;
+  
 }
 
 .footer ul li {
@@ -31,6 +33,7 @@
   font-size: 0.95rem;
   cursor: pointer;
   transition: color 0.3s;
+  
 }
 
 .footer ul li:hover {
@@ -42,4 +45,5 @@
   font-size: 0.85rem;
   margin-top: 15px;
   opacity: 0.8;
+  
 }

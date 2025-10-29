@@ -12,106 +12,103 @@ import "../../estilos/HospitalPerfil.css";
 
 import PuntuacionForm from "../../components/PuntuacionForm";
 
-function HospitalPerfil() {
+function Hospitales_General() {
   const { id } = useParams();
   const [hospital, setHospital] = useState(null);
-  const [comentarios, setComentarios] = useState([]);
   const [promedioPuntuacion, setPromedioPuntuacion] = useState(null);
 
 
-  // ✅ Validación robusta de localStorage
   let hospitalLogueado = null;
-  let usuarioLogueado = null;
+let usuarioLogueado = null;
 
-  try {
-    const rawHospital = localStorage.getItem("hospitalLogueado");
-    hospitalLogueado = rawHospital ? JSON.parse(rawHospital) : null;
-  } catch (e) {
-    console.warn("⚠️ Error al parsear hospitalLogueado:", e);
-  }
+try {
+  const rawHospital = localStorage.getItem("hospitalLogueado");
+  hospitalLogueado = rawHospital ? JSON.parse(rawHospital) : null;
+} catch (e) {
+  console.warn("⚠️ Error al parsear hospitalLogueado:", e);
+}
 
-  try {
-    const rawUsuario = localStorage.getItem("usuario");
-    usuarioLogueado = rawUsuario ? JSON.parse(rawUsuario) : null;
-  } catch (e) {
-    console.warn("⚠️ Error al parsear usuarioLogueado:", e);
-  }
+try {
+  const rawUsuario = localStorage.getItem("usuario");
+  usuarioLogueado = rawUsuario ? JSON.parse(rawUsuario) : null;
+} catch (e) {
+  console.warn("⚠️ Error al parsear usuarioLogueado:", e);
+}
 
-  // Extraer nombre del autor
+
   const nombreAutor =
     hospitalLogueado?.nombre?.trim() ||
     usuarioLogueado?.nombre?.trim() ||
     usuarioLogueado?.email?.trim() ||
     "Anónimo";
 
-  // Verificar si el hospital logueado está viendo su propio perfil
   const esPropioPerfil = hospitalLogueado?.id === id;
 
   useEffect(() => {
-    const fetchHospital = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${id}`);
-        const data = await res.json();
+  const fetchHospital = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${id}`);
+      const data = await res.json();
 
-        const especialidades =
-          typeof data.especialidades === "string"
-            ? JSON.parse(data.especialidades)
-            : data.especialidades;
+      const especialidades =
+        typeof data.especialidades === "string"
+          ? JSON.parse(data.especialidades)
+          : data.especialidades;
 
-        let comentariosCargados = [];
-        if (Array.isArray(data.comentarios)) {
-          comentariosCargados = data.comentarios;
-        } else if (typeof data.comentarios === "string") {
-          try {
-            comentariosCargados = JSON.parse(data.comentarios);
-          } catch {
-            console.warn("⚠️ Comentarios mal formateados");
-          }
+      let comentarios = [];
+      if (Array.isArray(data.comentarios)) {
+        comentarios = data.comentarios;
+      } else if (typeof data.comentarios === "string") {
+        try {
+          comentarios = JSON.parse(data.comentarios);
+        } catch {
+          console.warn("⚠️ Comentarios mal formateados:", data.comentarios);
         }
-
-        setHospital({ ...data, especialidades });
-        setComentarios(comentariosCargados);
-      } catch (err) {
-        console.error("Error al cargar hospital:", err);
       }
 
+      setHospital({ ...data, especialidades, comentarios });
+    } catch (err) {
+      console.error("Error al cargar hospital:", err);
+    }
+  };
 
-      const fetchPromedio = async () => {
-  try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${id}/promedio-puntuacion`);
-    const data = await res.json();
-    setPromedioPuntuacion(data.promedio || null);
-  } catch (err) {
-    console.error("Error al obtener promedio de puntuación:", err);
+  const fetchPromedio = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${id}/promedio-puntuacion`);
+      const data = await res.json();
+      setPromedioPuntuacion(data.promedio || null);
+    } catch (err) {
+      console.error("Error al obtener promedio de puntuación:", err);
+    }
+  };
+
+  if (id) {
+    fetchHospital();
+    fetchPromedio();
   }
-};
-
-fetchPromedio();
+}, [id]); // ✅ cierre correcto del useEffect
 
 
-
-    };
-
-    if (id) fetchHospital();
-  }, [id]);
 
   if (!hospital) return <p>Cargando hospital...</p>;
 
   return (
     <>
-      <BannerHospital imagenUrl={hospital.imagen_url} nombre={hospital.nombre} />
+      <BannerHospital
+        imagenUrl={hospital.imagen_url || "/default-banner.jpg"}
+        nombre={hospital.nombre || "Hospital sin nombre"}
+      />
 
       <main className="hospital-page">
         <div className="hospital-contenido">
           <HospitalHeader
   id={hospital.id}
   nombre={hospital.nombre}
-  descripcion={hospital.descripcion}
+  descripcion={hospital.descripcion || "Sin descripción disponible"}
   rating={promedioPuntuacion ? promedioPuntuacion.toFixed(1) : "—"}
-  reviews={comentarios.length}
+  reviews={hospital.comentarios?.length || 0}
   especialidades={hospital.especialidades}
 />
-
 
 
 
@@ -153,18 +150,18 @@ fetchPromedio();
           )}
 
           <section className="hospital-reviews">
-            <ComentariosList comentarios={comentarios} />
+            <ComentariosList comentarios={hospital.comentarios} />
             {!esPropioPerfil ? (
               <ComentarioForm
                 hospitalId={hospital.id}
                 usuarioNombre={nombreAutor}
                 onComentarioAgregado={(comentariosActualizados) =>
-                  setComentarios(comentariosActualizados)
+                  setHospital({ ...hospital, comentarios: comentariosActualizados })
                 }
               />
             ) : (
               <p className="comentario-bloqueado">
-                ⚠️ No puedes comentar en tu propio perfil.
+                ⚠️ Los hospitales no pueden comentar en su propio perfil.
               </p>
             )}
           </section>
@@ -180,18 +177,21 @@ fetchPromedio();
             </section>
           )}
 
+
           <section className="hospital-rating">
-            <h2>Tu puntuación</h2>
-            {!esPropioPerfil ? (
-              <PuntuacionForm hospitalId={hospital.id} 
-              onPromedioActualizado={(nuevoPromedio) => setPromedioPuntuacion(nuevoPromedio)}
-              />
-            ) : (
-              <p className="comentario-bloqueado">
-                ⚠️ No puedes puntuar tu propio perfil.
-              </p>
-            )}
-          </section>
+  <h2>Tu puntuación</h2>
+  {!esPropioPerfil ? (
+    <PuntuacionForm hospitalId={hospital.id} 
+    onPromedioActualizado={(nuevoPromedio) => setPromedioPuntuacion(nuevoPromedio)}
+    />
+  ) : (
+    <p className="comentario-bloqueado">
+      ⚠️ Los hospitales no pueden puntuar su propio perfil.
+    </p>
+  )}
+</section>
+
+
 
           <Hospitales />
         </div>
@@ -200,4 +200,4 @@ fetchPromedio();
   );
 }
 
-export default HospitalPerfil;
+export default Hospitales_General;

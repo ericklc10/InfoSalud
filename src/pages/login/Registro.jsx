@@ -10,18 +10,31 @@ function Registro() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ nombre, email, password: contraseña })
-});
-
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nombre, email, password: contraseña })
+      });
 
       const data = await res.json();
 
       if (res.ok) {
+        // Guardar usuario completo en localStorage
+        const usuario = {
+          id: data.id,
+          nombre: data.nombre,
+          email: email,
+          tipo: "usuario",
+          token: data.token
+        };
+
+        localStorage.setItem("usuario", JSON.stringify(usuario));
         localStorage.setItem("token", data.token);
-        localStorage.setItem("nombre", data.nombre); // 👈 guardar nombre
+
+        // 🔔 Disparar evento para que Navbar se actualice
+        window.dispatchEvent(new Event("usuarioActualizado"));
+
+        // Redirigir al home
         window.location.href = "/";
       } else {
         alert(data.message || "Error al registrar");
@@ -58,7 +71,9 @@ function Registro() {
         />
         <button type="submit">Registrarse</button>
       </form>
-      <p>¿Ya tenés cuenta? <a href="/login">Iniciar sesión</a></p>
+      <p>
+        ¿Ya tenés cuenta? <a href="/login">Iniciar sesión</a>
+      </p>
     </div>
   );
 }

@@ -13,29 +13,43 @@ function Login() {
     setMensaje("");
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password: contraseña })
-      });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email, password: contraseña })
+});
+
 
       const data = await res.json();
 
       if (res.ok) {
         setMensaje(data.message);
+
+        // Guardar datos en localStorage AAAAAAAAAAAAAA COMO COSTOOOO
         localStorage.setItem("token", data.token);
-        localStorage.setItem("nombre", data.nombre);
-        localStorage.setItem("tipo", data.tipo);
-        localStorage.setItem("id", data.id);
+localStorage.setItem("tipo", data.tipo);
+localStorage.setItem("avatar_url", data.avatar_url || "");
 
-        // Redirigir según tipo
-        if (data.tipo === "hospital") {
-          window.location.href = "/";
+if (data.tipo === "usuario") {
+  localStorage.setItem("usuario_id", data.id);
+  localStorage.setItem("usuario", JSON.stringify({
+    id: data.id,
+    nombre: data.nombre,
+    email: email
+  }));
+} else if (data.tipo === "hospital") {
+  localStorage.setItem("hospital_id", data.id);
+  localStorage.setItem("hospitalLogueado", JSON.stringify({
+    id: data.id,
+    nombre: data.nombre,
+    email: email
+  }));
+}
 
-        } else {
-          window.location.href = "/";
 
-        }
+
+        // Redirigir al home
+        window.location.href = "/";
       } else {
         setError(data.message || "Error al iniciar sesión");
       }

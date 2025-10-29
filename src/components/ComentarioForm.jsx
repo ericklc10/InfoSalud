@@ -2,47 +2,85 @@ import React, { useState } from "react";
 import "../estilos/Comentarios.css";
 import PuntuacionEstrellas from "./PuntuacionEstrellas";
 
-function ComentarioForm({ onAgregarComentario }) {
-  const [autor, setAutor] = useState("");
+function ComentarioForm({ hospitalId, usuarioNombre, onComentarioAgregado }) {
   const [texto, setTexto] = useState("");
-  const [puntuacion, setPuntuacion] = useState(5);
+  const [error, setError] = useState(null);
+  const [enviando, setEnviando] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (autor.trim() && texto.trim()) {
-      onAgregarComentario(autor, texto, puntuacion);
-      setAutor("");
+  let sesionActiva = null;
+
+  try {
+    const rawUsuario = localStorage.getItem("usuario");
+    const rawHospital = localStorage.getItem("hospitalLogueado");
+
+    const usuarioLogueado = rawUsuario ? JSON.parse(rawUsuario) : null;
+    const hospitalLogueado = rawHospital ? JSON.parse(rawHospital) : null;
+
+    sesionActiva = usuarioLogueado || hospitalLogueado;
+  } catch (e) {
+    console.warn("⚠️ Error al parsear sesión:", e);
+  }
+
+  const handleEnviar = async () => {
+    setError(null);
+
+    if (!texto.trim()) {
+      setError("⚠️ El comentario no puede estar vacío.");
+      return;
+    }
+
+    setEnviando(true);
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/hospital/${hospitalId}/comentarios`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            autor: usuarioNombre,
+            texto,
+            fecha: new Date().toISOString(),
+            puntuacion: null,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Error al enviar comentario");
+
+      onComentarioAgregado(data.comentarios);
       setTexto("");
-      setPuntuacion(5);
+    } catch (err) {
+      console.error("❌ Error al enviar comentario:", err);
+      setError("No se pudo enviar el comentario.");
+    } finally {
+      setEnviando(false);
     }
   };
 
+  if (!sesionActiva) {
+    return (
+      <p className="comentario-bloqueado">
+        ⚠️ Iniciá sesión para dejar un comentario.
+      </p>
+    );
+  }
+
   return (
-    <form className="comentario-form" onSubmit={handleSubmit}>
+    <div className="comentario-form">
       <h3>Escribir un comentario</h3>
-
-      <input
-        type="text"
-        placeholder="Tu nombre"
-        value={autor}
-        onChange={(e) => setAutor(e.target.value)}
-        required
-      />
-
       <textarea
-        placeholder="Escribe tu comentario..."
         value={texto}
         onChange={(e) => setTexto(e.target.value)}
-        required
-      ></textarea>
-
-      <div className="form-rating">
-        <label>Puntuación:</label>
-        <PuntuacionEstrellas valorInicial={puntuacion} onChange={setPuntuacion} />
-      </div>
-
-      <button type="submit">Enviar</button>
-    </form>
+        placeholder="Escribe tu comentario..."
+      />
+      {error && <p className="error">{error}</p>}
+      <button onClick={handleEnviar} disabled={enviando}>
+        {enviando ? "Enviando..." : "Enviar"}
+      </button>
+    </div>
   );
 }
 

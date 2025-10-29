@@ -12,7 +12,8 @@ function Footer() {
           <h4>InfoSalud+</h4>
           <ul>
             <li>Quiénes somos</li>
-            <li>Contacto</li>
+            
+            <li><Link to="/contacto">Contacto</Link></li>
             <li>Política de privacidad</li>
             <li>Términos y condiciones</li>
           </ul>

@@ -1,0 +1,197 @@
+.editar-perfil-container {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+  font-family: sans-serif;
+}
+
+.portada {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+}
+
+.perfil-info {
+  text-align: center;
+  margin-top: -60px;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid white;
+  object-fit: cover;
+}
+
+.formulario-edicion {
+  margin-top: 30px;
+}
+
+.formulario-edicion label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.formulario-edicion input,
+.formulario-edicion textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.botones {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.botones button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.botones button:first-child {
+  background-color: #ccc;
+}
+
+.botones button:last-child {
+  background-color: #007bff;
+  color: white;
+}
+
+
+
+.avatar-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+  border: 2px solid white;
+}
+
+.user-trigger {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+}
+
+.default-icon {
+  font-size: 24px;
+  margin-right: 8px;
+}
+
+.user-name {
+  color: white;
+  font-weight: bold;
+}
+
+.hospitales-seguidos {
+  margin-top: 40px; /* 👈 separa de los botones */
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.hospitales-seguidos h3 {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.hospitales-seguidos ul {
+  list-style: none;
+  padding: 0;
+}
+
+.hospitales-seguidos li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 12px; /* ✅ separa imagen y texto en desktop */
+}
+
+.hospitales-seguidos img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+.hospitales-seguidos span {
+  font-size: 1rem;
+  color: #444;
+}
+
+
+.hospital-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.2s ease;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.hospital-link:hover {
+  background-color: #eaeaea;
+}
+
+
+
+
+@media screen and (max-width: 600px) {
+  .editar-perfil-container {
+    padding: 10px;
+  }
+
+  .avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .formulario-edicion input,
+  .formulario-edicion textarea {
+    font-size: 0.9rem;
+  }
+
+  .botones {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .botones button {
+    width: 100%;
+  }
+
+  .hospitales-seguidos {
+    padding: 10px;
+  }
+
+  .hospitales-seguidos li {
+    flex-direction: row; /* ✅ mantiene imagen + texto en línea */
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hospitales-seguidos img {
+    margin-bottom: 0;
+  }
+
+  .hospitales-seguidos span {
+    font-size: 0.95rem;
+    flex: 1;
+    word-break: break-word;
+  }
+}

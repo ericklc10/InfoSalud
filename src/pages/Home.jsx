@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../estilos/Home.css";
 import { Link } from "react-router-dom";
-import Hospitales from "../components/Hospitales_cards"; // 👈 importamos el nuevo componente
+// import Hospitales from "../components/Hospitales_cards"; // 👈 importamos el nuevo componente
+import Hospitales_cards from "../components/Hospitales_cards";
 
 function Home() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -83,7 +84,7 @@ function Home() {
       </div>
 
       {/* Hospitales (ahora separado en componente) */}
-      <Hospitales />
+      <Hospitales_cards />
     </div>
   );
 }

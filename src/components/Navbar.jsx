@@ -1,18 +1,41 @@
+////Navbar
+
+
 import React, { useState, useEffect } from "react";
 import "../estilos/Navbar.css";
 import logo from "../assets/imagenes/logo2.png";
 import { Link } from "react-router-dom";
+import UserMenu from "./UserMenu";
+import Buscador from "./Buscador";
+
 
 function Navbar() {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [nombreUsuario, setNombreUsuario] = useState("");
 
   useEffect(() => {
-    const nombreGuardado = localStorage.getItem("nombre");
-    if (nombreGuardado) {
-      setNombreUsuario(nombreGuardado);
-    }
-  }, []);
+  const cargarNombre = () => {
+    const hospital = JSON.parse(localStorage.getItem("hospitalLogueado"));
+const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+const nombre = hospital?.nombre || usuario?.nombre || "";
+setNombreUsuario(nombre);
+
+  };
+
+  cargarNombre(); // inicial
+
+  const handleUsuarioActualizado = () => {
+    cargarNombre(); // actualizar cuando se dispara el evento
+  };
+
+  window.addEventListener("usuarioActualizado", handleUsuarioActualizado);
+
+  return () => {
+    window.removeEventListener("usuarioActualizado", handleUsuarioActualizado);
+  };
+}, []);
+
 
   const toggleMenu = () => {
     setMenuAbierto(!menuAbierto);
@@ -28,24 +51,13 @@ function Navbar() {
 
         {/* Buscador */}
         <div className="search-box desktop-only">
-          <input type="text" placeholder="Buscar hospitales, especialidades..." />
-          <button type="submit">&#128269;</button>
-        </div>
+  <Buscador />
+</div>
 
         {/* Acciones */}
         <div className="acciones desktop-only">
           {nombreUsuario ? (
-            <div className="usuario-logueado">
-  <span>👤 {nombreUsuario}</span>
-  <button onClick={() => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("nombre");
-    window.location.href = "/";
-  }} className="logout-btn">
-    Cerrar sesión
-  </button>
-</div>
-
+            <UserMenu nombre={nombreUsuario} />
           ) : (
             <>
               <Link to="/registro" className="registro-link">Registrarse</Link>
@@ -76,17 +88,7 @@ function Navbar() {
 
           <div className="acciones-movil">
             {nombreUsuario ? (
-              <div className="usuario-logueado">
-  <span>👤 {nombreUsuario}</span>
-  <button onClick={() => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("nombre");
-    window.location.href = "/";
-  }} className="logout-btn">
-    Cerrar sesión
-  </button>
-</div>
-
+              <UserMenu nombre={nombreUsuario} />
             ) : (
               <>
                 <Link to="/login" className="login-btn">Iniciar sesión</Link>

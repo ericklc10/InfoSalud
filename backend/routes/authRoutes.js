@@ -1,3 +1,6 @@
+////authRoutes.js
+
+
 import express from 'express';
 
 import { loginUser, registerUser, registerHospital } from '../controllers/authController.js';
