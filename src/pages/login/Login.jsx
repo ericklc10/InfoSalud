@@ -14,39 +14,50 @@ function Login() {
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ email, password: contraseña })
-});
-
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: contraseña }),
+      });
 
       const data = await res.json();
 
       if (res.ok) {
         setMensaje(data.message);
 
-        // Guardar datos en localStorage AAAAAAAAAAAAAA COMO COSTOOOO
+        // Guardar datos en localStorage
         localStorage.setItem("token", data.token);
-localStorage.setItem("tipo", data.tipo);
-localStorage.setItem("avatar_url", data.avatar_url || "");
+        localStorage.setItem("tipo", data.tipo);
 
-if (data.tipo === "usuario") {
-  localStorage.setItem("usuario_id", data.id);
-  localStorage.setItem("usuario", JSON.stringify({
-    id: data.id,
-    nombre: data.nombre,
-    email: email
-  }));
-} else if (data.tipo === "hospital") {
-  localStorage.setItem("hospital_id", data.id);
-  localStorage.setItem("hospitalLogueado", JSON.stringify({
-    id: data.id,
-    nombre: data.nombre,
-    email: email
-  }));
-}
+        // Generar fallback de foto si no viene del backend
+        const foto =
+          data.avatar_url ||
+          `https://ui-avatars.com/api/?name=${encodeURIComponent(
+            data.nombre
+          )}&background=3498db&color=fff`;
 
-
+        if (data.tipo === "usuario") {
+          localStorage.setItem("usuario_id", data.id);
+          localStorage.setItem(
+            "usuario",
+            JSON.stringify({
+              id: data.id,
+              nombre: data.nombre,
+              email: data.email || email,
+              foto, // ✅ guardamos la foto
+            })
+          );
+        } else if (data.tipo === "hospital") {
+          localStorage.setItem("hospital_id", data.id);
+          localStorage.setItem(
+            "hospitalLogueado",
+            JSON.stringify({
+              id: data.id,
+              nombre: data.nombre,
+              email: data.email || email,
+              foto, // opcional
+            })
+          );
+        }
 
         // Redirigir al home
         window.location.href = "/";
@@ -82,7 +93,9 @@ if (data.tipo === "usuario") {
       {mensaje && <p className="success">{mensaje}</p>}
       {error && <p className="error">{error}</p>}
 
-      <p>¿No tenés cuenta? <a href="/registro">Registrate</a></p>
+      <p>
+        ¿No tenés cuenta? <a href="/registro">Registrate</a>
+      </p>
     </div>
   );
 }

@@ -8,7 +8,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
 import hospitalRoutes from './routes/hospitalRoutes.js';
-import usuariosRoutes from './routes/usuariosRoutes.js'; // ✅ nueva ruta
+import usuariosRoutes from './routes/usuariosRoutes.js'; 
 
 import nodemailer from "nodemailer";
 
@@ -24,7 +24,7 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/hospital', hospitalRoutes);
-app.use('/api/usuarios', usuariosRoutes); // ✅ nueva ruta montada
+app.use('/api/usuarios', usuariosRoutes); 
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

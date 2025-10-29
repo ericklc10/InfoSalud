@@ -161,7 +161,8 @@ try {
               />
             ) : (
               <p className="comentario-bloqueado">
-                ⚠️ Los hospitales no pueden comentar en su propio perfil.
+                ⚠️ Inicia sesion como Usuario para comentar
+                
               </p>
             )}
           </section>

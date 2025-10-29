@@ -35,7 +35,7 @@ function Hospitales_cards() {
 
   return (
     <section className="hospitales">
-      <h2>🏥 Hospitales Destacados</h2>
+      <h2>🏥 Centros de salud destacados</h2>
       <div className="cards">
         {hospitales.length === 0 ? (
           <p>No se encontraron hospitales destacados.</p>

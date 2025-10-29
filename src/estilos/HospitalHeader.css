@@ -1,65 +1,81 @@
 .hospital-header {
-  margin: 2rem 0;
-  padding: 1rem 0;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  text-align: left;
 }
 
-/* Contenedor del título y botón */
-.hospital-header .header-top {
+.header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap; /* ✅ permite que se acomode en mobile */
-  gap: 10px;
+  flex-wrap: wrap; /* ✅ permite que el botón baje en pantallas chicas */
+  gap: 1rem;
 }
 
-/* Título del hospital */
-.hospital-header h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin: 0;
-  flex-grow: 1;
+.header-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
-/* Descripción y rating */
-.hospital-header p {
-  font-size: 1.2rem;
-  color: #555;
-  margin: 0.3rem 0;
-}
-
-.hospital-header .rating {
-  color: #f39c12;
+.hospital-nombre {
+  font-size: 2rem;
   font-weight: bold;
-  font-size: 1.1rem;
+  margin: 0;
+  color: #1f2937;
 }
 
-/* Línea decorativa */
-.hospital-header .divider {
+.rating {
+  margin-top: 0.3rem;
+  font-size: 1.1rem;
+  color: #374151;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.divider {
   display: block;
-  width: 80px;
-  height: 4px;
+  width: 60px;   /* 🔹 más pequeña */
+  height: 3px;   /* 🔹 más fina */
+  margin: 1rem auto 0; /* centrada */
   background-color: #3498db;
-  margin: 1rem auto 0 auto;
   border-radius: 2px;
 }
 
-/* Responsive */
+
+/* 📱 Responsividad */
 @media (max-width: 768px) {
-  .hospital-header h1 {
-    font-size: 1.8rem;
+  .hospital-nombre {
+    font-size: 1.6rem;
   }
 
-  .hospital-header p {
+  .rating {
     font-size: 1rem;
   }
 
-  .hospital-header .header-top {
+  .header-row {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-start; /* título y rating quedan a la izquierda */
   }
 
-  .hospital-header .boton-seguir {
-    align-self: flex-end;
+  .header-right {
+    align-self: flex-end; /* botón se alinea a la derecha si hay espacio */
+  }
+}
+
+@media (max-width: 480px) {
+  .hospital-nombre {
+    font-size: 1.4rem;
+  }
+
+  .rating {
+    font-size: 0.95rem;
+  }
+
+  .divider {
+    height: 3px;
   }
 }

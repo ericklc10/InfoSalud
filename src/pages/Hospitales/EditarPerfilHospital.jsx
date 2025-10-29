@@ -48,32 +48,41 @@ function EditarPerfilHospital() {
   };
 
   const handleGuardar = async () => {
-    const payload = {
-      nombre,
-      descripcion,
-      ubicacion,
-      imagen_url: imagenUrl,
-      especialidades
-    };
+  // Validación de ubicación
+  const isValidUbicacion = ubicacion.startsWith("https://www.google.com/maps/embed?pb=");
 
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${hospitalId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+  if (!ubicacion || !isValidUbicacion) {
+    alert("La ubicación es obligatoria y debe ser un iframe válido de Google Maps.");
+    return;
+  }
 
-      const data = await res.json();
-      if (res.ok) {
-        alert("Perfil actualizado con éxito");
-        navigate(`/hospitales/${hospitalId}`);
-      } else {
-        alert(data.message || "Error al guardar cambios");
-      }
-    } catch (err) {
-      alert("Error de conexión");
-    }
+  const payload = {
+    nombre,
+    descripcion,
+    ubicacion,
+    imagen_url: imagenUrl,
+    especialidades
   };
+
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${hospitalId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert("Perfil actualizado con éxito");
+      navigate(`/hospitales/${hospitalId}`);
+    } else {
+      alert(data.message || "Error al guardar cambios");
+    }
+  } catch (err) {
+    alert("Error de conexión");
+  }
+};
+
 
   return (
     <div className="editar-perfil">
@@ -86,11 +95,14 @@ function EditarPerfilHospital() {
       <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
 
       <label>Ubicación (iframe de Google Maps)</label>
-      <input
-        value={ubicacion}
-        onChange={(e) => setUbicacion(e.target.value)}
-        placeholder="https://www.google.com/maps/embed?pb=..."
-      />
+<input
+  value={ubicacion}
+  onChange={(e) => setUbicacion(e.target.value)}
+  placeholder="https://www.google.com/maps/embed?pb=..."
+  required
+  className={ubicacion && !ubicacion.startsWith("https://www.google.com/maps/embed?pb=") ? "input-error" : ""}
+/>
+
 
       <label>Especialidades</label>
       {especialidades.map((esp, index) => (

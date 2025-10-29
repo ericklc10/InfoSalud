@@ -1,36 +1,112 @@
-.hospital-perfil {
-  padding: 2rem;
+/* Contenedor general de la página */
+.hospital-page {
+  display: flex;
+  justify-content: center;
+  background-color: #f9fafb;
+  padding: 2rem 1rem; /* espacio arriba/abajo y a los costados */
 }
 
+/* Contenido centrado */
+.hospital-contenido {
+  width: 100%;
+  max-width: 1200px; /* límite para pantallas grandes */
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* separación entre secciones */
+}
+
+/* Secciones internas */
+.hospital-section {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* Banner ocupa todo el ancho */
 .banner {
-  position: relative;
+  width: 100%;
+  margin: 0;
+  border-radius: 0;
 }
 
 .banner img {
   width: 100%;
   height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* Galería responsive */
+.hospital-gallery .gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.hospital-gallery img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
   border-radius: 8px;
 }
 
-.editar-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
+/* Comentarios bloqueados */
+.comentario-bloqueado {
+  text-align: center;
+  color: #b91c1c;
+  font-weight: 500;
+  margin-top: 1rem;
 }
 
-.info-hospital {
+
+.hospital-info h2 {
+  margin-bottom: 1.5rem; /* 🔹 más espacio debajo del título */
+}
+
+.hospital-info {
   margin-top: 2rem;
+  text-align: left; /* 🔹 asegura que el título "Quiénes somos" quede alineado */
 }
 
-.card-especialidad {
-  background-color: #f9f9f9;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border-radius: 6px;
+
+/* Responsividad */
+@media (max-width: 1024px) {
+  .hospital-contenido {
+    max-width: 900px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hospital-page {
+    padding: 1.5rem 1rem;
+  }
+
+  .hospital-contenido {
+    gap: 1.5rem;
+  }
+
+  .hospital-gallery img {
+    height: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hospital-page {
+    padding: 1rem 0.5rem;
+  }
+
+  .hospital-section {
+    padding: 1rem;
+  }
+
+  .hospital-gallery img {
+    height: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hospital-info h2 {
+    margin-bottom: 1rem; /* 🔹 menos espacio en móviles */
+  }
 }

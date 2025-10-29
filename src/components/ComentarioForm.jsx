@@ -7,18 +7,38 @@ function ComentarioForm({ hospitalId, usuarioNombre, onComentarioAgregado }) {
   const [error, setError] = useState(null);
   const [enviando, setEnviando] = useState(false);
 
-  let sesionActiva = null;
+  let usuarioLogueado = null;
+  let hospitalLogueado = null;
 
   try {
     const rawUsuario = localStorage.getItem("usuario");
     const rawHospital = localStorage.getItem("hospitalLogueado");
 
-    const usuarioLogueado = rawUsuario ? JSON.parse(rawUsuario) : null;
-    const hospitalLogueado = rawHospital ? JSON.parse(rawHospital) : null;
+    usuarioLogueado = rawUsuario ? JSON.parse(rawUsuario) : null;
+    hospitalLogueado = rawHospital ? JSON.parse(rawHospital) : null;
 
-    sesionActiva = usuarioLogueado || hospitalLogueado;
+    // 👇 Agregá este log para ver qué trae
+  console.log("Usuario logueado:", usuarioLogueado);
+
   } catch (e) {
     console.warn("⚠️ Error al parsear sesión:", e);
+  }
+
+  // 🚫 Bloqueamos a hospitales
+  // if (hospitalLogueado) {
+  //   return (
+  //     <p className="comentario-bloqueado">
+  //       ⚠️ Los hospitales no pueden comentar en su propio perfil.
+  //     </p>
+  //   );
+  // }
+
+  if (!usuarioLogueado) {
+    return (
+      <p className="comentario-bloqueado">
+        ⚠️ Iniciá sesión como usuario para dejar un comentario.
+      </p>
+    );
   }
 
   const handleEnviar = async () => {
@@ -38,16 +58,17 @@ function ComentarioForm({ hospitalId, usuarioNombre, onComentarioAgregado }) {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            autor: usuarioNombre,
-            texto,
-            fecha: new Date().toISOString(),
-            puntuacion: null,
-          }),
+  autor: usuarioNombre,
+  texto,
+  fecha: new Date().toISOString(),
+  puntuacion: null,
+  usuarioId: usuarioLogueado.id // ✅ el backend usará esto para buscar url_imagen
+})
+
         }
       );
 
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.error || "Error al enviar comentario");
 
       onComentarioAgregado(data.comentarios);
@@ -59,14 +80,6 @@ function ComentarioForm({ hospitalId, usuarioNombre, onComentarioAgregado }) {
       setEnviando(false);
     }
   };
-
-  if (!sesionActiva) {
-    return (
-      <p className="comentario-bloqueado">
-        ⚠️ Iniciá sesión para dejar un comentario.
-      </p>
-    );
-  }
 
   return (
     <div className="comentario-form">

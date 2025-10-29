@@ -5,7 +5,7 @@ import Footer from "./components/Footer";
 // import HospitalItaliano from "./pages/Hospitales/Italiano/HospitalItaliano";
 // import HospitalFavaloro from "./pages/Hospitales/Favaloro/HospitalFavaloro";
 // import HospitalGarrahan from "./pages/Hospitales/Garrahan/HospitalGarrahan";
-// import HospitalAleman from "./pages/Hospitales/Aleman/HospitalAleman";
+import HospitalAleman from "./pages/Hospitales/Aleman/HospitalAleman";
 
 import ScrollToTop from "./components/ScrollToTop";
 import Registro from "./pages/login/Registro";
@@ -25,6 +25,8 @@ import Hospitales_General from "./pages/Hospitales/Hospitales_General";
 import Buscar from "./pages/Buscar";
 
 import Contacto from "./pages/Contacto";
+
+import QuienesSomos from "./pages/QuienesSomos";
 
 
 
@@ -46,8 +48,8 @@ function App() {
             {/* Hospitales visibles sin autenticación */}
             {/* <Route path="/hospital/italiano" element={<HospitalItaliano />} />
             <Route path="/hospital/favaloro" element={<HospitalFavaloro />} />
-            <Route path="/hospital/garrahan" element={<HospitalGarrahan />} />
-            <Route path="/hospital/aleman" element={<HospitalAleman />} /> */}
+            <Route path="/hospital/garrahan" element={<HospitalGarrahan />} />*/}
+            <Route path="/hospital/aleman" element={<HospitalAleman />} /> 
         
             {/* <Route path="/hospitales/:id" element={<HospitalPublico />} /> */}
 
@@ -61,9 +63,10 @@ function App() {
           <Route path="/buscar" element={<Buscar />} />
 
           <Route path="/contacto" element={<Contacto />} />
+          
 
 
-
+              <Route path="/quienes-somos" element={<QuienesSomos />} />
 
 
                

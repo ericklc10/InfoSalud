@@ -2,11 +2,7 @@ import React from "react";
 import "../estilos/HospitalHeader.css";
 import BotonSeguir from "./BotonSeguir";
 
-function HospitalHeader({ id, nombre, descripcion, rating, reviews, especialidades }) {
-  const resumenEspecialidades = Array.isArray(especialidades)
-    ? especialidades.map((e) => e.titulo || e.nombre).join(", ")
-    : null;
-
+function HospitalHeader({ id, nombre, rating, reviews }) {
   let hospitalLogueado = null;
   try {
     const rawHospital = localStorage.getItem("hospitalLogueado");
@@ -16,27 +12,24 @@ function HospitalHeader({ id, nombre, descripcion, rating, reviews, especialidad
   }
 
   const esPropioPerfil = hospitalLogueado?.id === id;
-
-  // Validación defensiva: solo renderizar el botón si el ID es válido
   const mostrarBotonSeguir = id && !esPropioPerfil;
 
   return (
     <section className="hospital-header">
-      <div className="header-top">
-        <h1 className="hospital-nombre">{nombre}</h1>
-        {mostrarBotonSeguir && <BotonSeguir hospitalId={id} />}
+      <div className="header-row">
+        <div className="header-left">
+          <h1 className="hospital-nombre">{nombre}</h1>
+          <p className="rating">
+            ⭐ {rating} ({reviews} reseñas)
+          </p>
+        </div>
+
+        {mostrarBotonSeguir && (
+          <div className="header-right">
+            <BotonSeguir hospitalId={id} />
+          </div>
+        )}
       </div>
-
-      <p>{descripcion}</p>
-      <p className="rating">
-        {rating} ⭐ ({reviews} reseñas)
-      </p>
-
-      {resumenEspecialidades && (
-        <p className="especialidades-resumen">
-          <strong>Especialidades:</strong> {resumenEspecialidades}
-        </p>
-      )}
 
       <span className="divider"></span>
     </section>

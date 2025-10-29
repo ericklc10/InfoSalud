@@ -97,14 +97,7 @@ setNombreUsuario(nombre);
             )}
           </div>
 
-          <nav className="nav-movil">
-            <ul>
-              <li><a href="/">Inicio</a></li>
-              <li><a href="/novedades">Novedades</a></li>
-              <li><a href="/hospitales">Hospitales</a></li>
-              <li><a href="/contacto">Contacto</a></li>
-            </ul>
-          </nav>
+          
         </div>
       </div>
     </header>

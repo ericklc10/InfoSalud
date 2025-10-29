@@ -13,19 +13,26 @@ function Registro() {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre, email, password: contraseña })
+        body: JSON.stringify({ nombre, email, password: contraseña }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        // Guardar usuario completo en localStorage
+        // Generar fallback de foto si no viene del backend
+        const foto =
+          data.avatar_url ||
+          `https://ui-avatars.com/api/?name=${encodeURIComponent(
+            nombre
+          )}&background=3498db&color=fff`;
+
         const usuario = {
           id: data.id,
           nombre: data.nombre,
-          email: email,
+          email: data.email || email,
           tipo: "usuario",
-          token: data.token
+          token: data.token,
+          foto, // ✅ guardamos la foto
         };
 
         localStorage.setItem("usuario", JSON.stringify(usuario));

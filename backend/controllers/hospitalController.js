@@ -132,31 +132,67 @@ export const obtenerHospitalesDestacados = async (req, res) => {
 // =======================
 export const agregarComentario = async (req, res) => {
   const { id } = req.params;
-  const { autor, texto, fecha, puntuacion } = req.body;
+  const { autor, texto, fecha, puntuacion, usuarioId } = req.body;
 
-  const nuevoComentario = { autor, texto, fecha, puntuacion };
+  try {
+    // 1. Buscar avatar_url del usuario
+    const { data: usuario, error: userError } = await supabase
+      .from("usuarios")
+      .select("avatar_url")
+      .eq("id", usuarioId)
+      .single();
 
-  const { data: hospital, error: fetchError } = await supabase
-    .from("hospitales")
-    .select("comentarios")
-    .eq("id", id)
-    .single();
+    if (userError) {
+      console.error("❌ Error al obtener usuario:", userError.message);
+      return res.status(500).json({ error: "Error al obtener usuario" });
+    }
 
-  if (fetchError) return res.status(500).json({ error: fetchError.message });
+    // 2. Armar el nuevo comentario con avatar incluido
+    const nuevoComentario = {
+      autor,
+      texto,
+      fecha,
+      puntuacion,
+      avatar_url: usuario?.avatar_url || null, // ✅ foto de perfil del usuario
+    };
 
-  const comentariosActualizados = Array.isArray(hospital.comentarios)
-    ? [...hospital.comentarios, nuevoComentario]
-    : [nuevoComentario];
+    // 3. Obtener comentarios actuales del hospital
+    const { data: hospital, error: fetchError } = await supabase
+      .from("hospitales")
+      .select("comentarios")
+      .eq("id", id)
+      .single();
 
-  const { error: updateError } = await supabase
-    .from("hospitales")
-    .update({ comentarios: comentariosActualizados })
-    .eq("id", id);
+    if (fetchError) {
+      console.error("❌ Error al obtener hospital:", fetchError.message);
+      return res.status(500).json({ error: "Error al obtener hospital" });
+    }
 
-  if (updateError) return res.status(500).json({ error: updateError.message });
+    const comentariosActualizados = Array.isArray(hospital.comentarios)
+      ? [...hospital.comentarios, nuevoComentario]
+      : [nuevoComentario];
 
-  res.json({ message: "Comentario agregado", comentarios: comentariosActualizados });
+    // 4. Guardar comentarios actualizados
+    const { error: updateError } = await supabase
+      .from("hospitales")
+      .update({ comentarios: comentariosActualizados })
+      .eq("id", id);
+
+    if (updateError) {
+      console.error("❌ Error al actualizar hospital:", updateError.message);
+      return res.status(500).json({ error: "Error al actualizar hospital" });
+    }
+
+    res.json({
+      message: "Comentario agregado",
+      comentarios: comentariosActualizados,
+    });
+  } catch (err) {
+    console.error("❌ Error inesperado:", err.message);
+    res.status(500).json({ error: "Error al agregar comentario" });
+  }
 };
+
 
 // =======================
 // Actualizar puntuación directa en hospital (no recomendada)

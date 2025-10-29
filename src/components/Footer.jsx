@@ -11,11 +11,10 @@ function Footer() {
         <div>
           <h4>InfoSalud+</h4>
           <ul>
-            <li>Quiénes somos</li>
+            <li><Link to="/quienes-somos">Quiénes somos</Link></li>
             
             <li><Link to="/contacto">Contacto</Link></li>
-            <li>Política de privacidad</li>
-            <li>Términos y condiciones</li>
+          
           </ul>
         </div>
 
@@ -23,9 +22,7 @@ function Footer() {
         <div>
           <h4>Hospitales</h4>
           <ul>
-            <li>
-              <Link to="/registro-hospital">Únete a nosotros</Link>
-            </li>
+            
             <li>
               <Link to="/registro-hospital">Crear cuenta de hospital</Link>
             </li>
@@ -36,22 +33,23 @@ function Footer() {
         <div>
           <h4>Pacientes</h4>
           <ul>
-            <li>Buscar hospitales</li>
+            <li><Link to="/buscar">Buscar hospitales</Link></li>
             <li>Especialidades</li>
-            <li>Reseñas y calificaciones</li>
-            <li>Solicitar turno</li>
-            <li>Preguntas frecuentes</li>
+            
           </ul>
-        </div>
+        </div>  
 
         {/* Columna 4 */}
         <div>
           <h4>Síguenos</h4>
           <ul>
-            <li>Facebook</li>
-            <li>Instagram</li>
-            <li>Twitter / X</li>
-            <li>LinkedIn</li>
+            
+            <li><Link to="https://www.instagram.com/ericklc110/">Instagram </Link></li>
+            
+            <li><Link to="https://www.linkedin.com/in/erick-lc">LinkedIn </Link></li>
+
+            <li><Link to="https://github.com/ericklc10">github </Link></li>
+
           </ul>
         </div>
       </div>
