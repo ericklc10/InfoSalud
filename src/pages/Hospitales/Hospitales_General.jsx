@@ -47,8 +47,7 @@ try {
   useEffect(() => {
   const fetchHospital = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/hospital/${id}`);
-
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${id}`);
       const data = await res.json();
 
       const especialidades =
@@ -75,7 +74,7 @@ try {
 
   const fetchPromedio = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/hospital/${id}/promedio-puntuacion`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${id}/promedio-puntuacion`);
       const data = await res.json();
       setPromedioPuntuacion(data.promedio || null);
     } catch (err) {

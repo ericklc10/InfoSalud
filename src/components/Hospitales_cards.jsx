@@ -9,8 +9,7 @@ function Hospitales_cards() {
     const fetchHospitales = async () => {
       try {
         // Consumimos el nuevo endpoint de destacados
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/hospital/destacados`);
-
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/destacados`);
 
         const data = await res.json();
 
