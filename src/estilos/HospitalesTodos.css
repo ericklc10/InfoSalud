@@ -1,0 +1,132 @@
+.hospitales-todos {
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hospitales-todos h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #006DFF;
+  text-align: center;
+}
+
+/* Lista general */
+.lista-hospitales {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+/* Cada hospital */
+.hospital-item {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hospital-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Link interno */
+.hospital-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  text-decoration: none;
+  color: #333;
+}
+
+/* Imagen */
+.hospital-thumb {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+/* Nombre */
+.hospital-link span {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #222;
+}
+
+/* Paginación */
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.paginacion button {
+  background: #006DFF;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.paginacion button:hover:not(:disabled) {
+  background: #0056cc;
+}
+
+.paginacion button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.paginacion span {
+  font-size: 0.95rem;
+  color: #444;
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+  .hospital-link {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .hospital-thumb {
+    width: 55px;
+    height: 55px;
+  }
+
+  .hospital-link span {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hospitales-todos h2 {
+    font-size: 1.4rem;
+  }
+
+  .hospital-link {
+    gap: 0.6rem;
+    padding: 0.6rem;
+  }
+
+  .hospital-thumb {
+    width: 50px;
+    height: 50px;
+  }
+
+  .hospital-link span {
+    font-size: 0.95rem;
+  }
+}

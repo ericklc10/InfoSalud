@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../estilos/Home.css";
 import { Link } from "react-router-dom";
 import Hospitales_cards from "../components/Hospitales_cards";
+import HospitalesTodos from "../components/HospitalesTodos";
 
 function Home() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -86,6 +87,9 @@ function Home() {
 
         {/* Hospitales destacados */}
         <Hospitales_cards />
+              {/* Todoss los Hospitales */}
+              <HospitalesTodos />
+
       </div>
     </div>
   );

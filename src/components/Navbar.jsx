@@ -75,31 +75,31 @@ setNombreUsuario(nombre);
       </div>
 
       {/* Sidebar móvil */}
-      <div className={`sidebar-movil ${menuAbierto ? "activo" : ""}`}>
-        <button className="cerrar-menu" onClick={toggleMenu}>✖</button>
+      {/* Sidebar móvil */}
+<div className={`sidebar-movil ${menuAbierto ? "activo" : ""}`}>
+  <button className="cerrar-menu" onClick={toggleMenu}>✖</button>
 
-        <div className="sidebar-contenido">
-          <img src={logo} alt="Logo InfoSalud+" className="logo-sidebar" />
+  <div className="sidebar-contenido">
+    <img src={logo} alt="Logo InfoSalud+" className="logo-sidebar" />
 
-          <div className="search-box">
-            <input type="text" placeholder="Buscar..." />
-            <button type="submit">&#128269;</button>
-          </div>
+    {/* Buscador móvil: usar el mismo componente */}
+    <div className="search-box">
+      <Buscador />
+    </div>
 
-          <div className="acciones-movil">
-            {nombreUsuario ? (
-              <UserMenu nombre={nombreUsuario} />
-            ) : (
-              <>
-                <Link to="/login" className="login-btn">Iniciar sesión</Link>
-                <Link to="/registro" className="registro-link">Registrarse</Link>
-              </>
-            )}
-          </div>
+    <div className="acciones-movil">
+      {nombreUsuario ? (
+        <UserMenu nombre={nombreUsuario} />
+      ) : (
+        <>
+          <Link to="/login" className="login-btn">Iniciar sesión</Link>
+          <Link to="/registro" className="registro-link">Registrarse</Link>
+        </>
+      )}
+    </div>
+  </div>
+</div>
 
-          
-        </div>
-      </div>
     </header>
   );
 }
