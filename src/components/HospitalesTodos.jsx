@@ -11,7 +11,8 @@ function HospitalesTodos() {
   useEffect(() => {
     const fetchHospitales = async () => {
       try {
-        const res = await fetch("http://localhost:4000/hospital"); // tu backend
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital`);
+ // tu backend
         if (!res.ok) throw new Error("Error al cargar hospitales");
         const data = await res.json();
         setHospitales(data);
