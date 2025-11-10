@@ -20,7 +20,7 @@ function Buscador() {
     <form className="search-box" onSubmit={handleSubmit}>
       <input
         type="text"
-        placeholder="Buscar hospitales, especialidades..."
+        placeholder="Buscar..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />

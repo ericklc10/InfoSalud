@@ -28,6 +28,8 @@ import Contacto from "./pages/Contacto";
 
 import QuienesSomos from "./pages/QuienesSomos";
 
+import ScrollToHashElement from "./components/ScrollToHashElement";
+
 
 
 
@@ -35,6 +37,7 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
+      <ScrollToHashElement />
       <div className="app-layout">
         <Navbar />
         <main className="main-content">
@@ -68,7 +71,7 @@ function App() {
 
               <Route path="/quienes-somos" element={<QuienesSomos />} />
 
-
+               
                
           </Routes>
         </main>

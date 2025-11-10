@@ -1,6 +1,4 @@
 import express from "express";
-const router = express.Router();
-
 import {
   obtenerHospitales,
   obtenerHospitalPorId,
@@ -15,53 +13,56 @@ import {
   dejarDeSeguirHospital,
   obtenerHospitalesSeguidos,
   obtenerHospitalesDestacados,
-  buscarHospitales
+  buscarHospitales,
+  puntuarEspecialidad,
+  obtenerPromedioEspecialidad,
+   obtenerPuntuacionUsuarioEspecialidad,
+   obtenerEspecialidadesDestacadas 
 } from "../controllers/hospitalController.js";
 
-// =======================
-// Rutas específicas primero (para evitar conflictos)
-// =======================
+const router = express.Router();
 
-// Guardar o actualizar puntuación por usuario
+// =======================
+// Puntuación Especialidades
+// =======================
+router.post("/:hospitalId/especialidad/:espKey/puntuacion", puntuarEspecialidad);
+router.get("/:hospitalId/especialidad/:espKey/promedio", obtenerPromedioEspecialidad);
+router.get("/:hospitalId/especialidad/:espKey/puntuacion-usuario/:usuarioId", obtenerPuntuacionUsuarioEspecialidad);
+
+
+// =======================
+// Puntuación Hospital
+// =======================
 router.put("/:hospitalId/puntuacion-usuario", guardarPuntuacionUsuario);
-
-// Obtener puntuación del usuario actual
 router.get("/:hospitalId/puntuacion-usuario", obtenerPuntuacionUsuario);
-
-// Obtener promedio de puntuaciones del hospital
 router.get("/:hospitalId/promedio-puntuacion", obtenerPromedioPuntuacion);
 
-// Seguimiento: verificar, seguir, dejar de seguir
+// =======================
+// Seguimiento
+// =======================
 router.get("/:hospitalId/seguimiento", verificarSeguimiento);
 router.post("/:hospitalId/seguir", seguirHospital);
 router.delete("/:hospitalId/seguir", dejarDeSeguirHospital);
-
-// Obtener hospitales seguidos por usuario
 router.get("/seguidos/:usuario_id", obtenerHospitalesSeguidos);
 
 // =======================
-// Hospitales destacados y buscador (antes de :id)
+// Hospitales destacados y buscador
 // =======================
 router.get("/destacados", obtenerHospitalesDestacados);
 router.get("/buscar", buscarHospitales);
 
 // =======================
-// Rutas genéricas al final
+// Especialidades destacadas 
 // =======================
+router.get("/especialidades/destacadas", obtenerEspecialidadesDestacadas);
 
-// Listado de hospitales
+// =======================
+// Hospitales genéricos
+// =======================
 router.get("/", obtenerHospitales);
-
-// Obtener hospital por UUID
 router.get("/:id", obtenerHospitalPorId);
-
-// Actualizar hospital por UUID
 router.put("/:id", actualizarHospital);
-
-// Agregar comentario por UUID
 router.put("/:id/comentarios", agregarComentario);
-
-// Actualizar puntuación directa (no recomendada)
 router.put("/:id/puntuacion", actualizarPuntuacion);
 
 export default router;

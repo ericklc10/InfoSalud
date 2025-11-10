@@ -1,8 +1,9 @@
 .footer {
-  background-color: #0d3b66;
+  background: linear-gradient(135deg, #0d3b66, #1a508b); /* gradiente elegante */
   color: #fff;
   padding: 40px 20px;
   margin-top: 40px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2); /* separador superior */
 }
 
 .footer-columns {
@@ -18,26 +19,44 @@
   border-bottom: 2px solid #f4d35e;
   display: inline-block;
   padding-bottom: 5px;
-  
 }
 
 .footer ul {
   list-style: none;
   padding: 0;
   margin: 0;
-  
 }
 
 .footer ul li {
   margin-bottom: 8px;
   font-size: 0.95rem;
-  cursor: pointer;
-  transition: color 0.3s;
-  
 }
 
-.footer ul li:hover {
+/* ✅ Links con animación elegante */
+.footer ul li a {
+  color: #fff;
+  text-decoration: none;
+  position: relative;
+  transition: color 0.3s;
+}
+
+.footer ul li a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0%;
+  height: 2px;
+  background-color: #f4d35e;
+  transition: width 0.3s;
+}
+
+.footer ul li a:hover {
   color: #f4d35e;
+}
+
+.footer ul li a:hover::after {
+  width: 100%;
 }
 
 .copy {
@@ -45,5 +64,42 @@
   font-size: 0.85rem;
   margin-top: 15px;
   opacity: 0.8;
-  
+}
+
+/* 📱 Responsivo */
+@media (max-width: 1024px) {
+  .footer-columns {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-columns {
+    grid-template-columns: repeat(2, 1fr); /* tablets: 2 columnas */
+    text-align: left;
+  }
+
+  .footer h4 {
+    border: none; /* más limpio en pantallas pequeñas */
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-columns {
+    grid-template-columns: 1fr; /* móviles: 1 columna */
+    text-align: left;
+  }
+
+  .footer {
+    padding: 30px 15px;
+  }
+
+  .footer h4 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+
+  .footer ul li {
+    font-size: 0.9rem;
+  }
 }

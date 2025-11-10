@@ -8,8 +8,8 @@ export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Buscar en tabla usuarios
-    const { data: usuario, error: userError } = await supabase
+    // Buscar en usuarios
+    const { data: usuario } = await supabase
       .from("usuarios")
       .select("*")
       .eq("email", email)
@@ -26,12 +26,12 @@ export const loginUser = async (req, res) => {
         nombre: usuario.nombre,
         tipo: "usuario",
         id: usuario.id,
-        avatar_url: usuario.avatar_url || ""
+        avatar_url: usuario.avatar_url || null
       });
     }
 
-    // Buscar en tabla hospitales
-    const { data: hospital, error: hospitalError } = await supabase
+    // Buscar en hospitales
+    const { data: hospital } = await supabase
       .from("hospitales")
       .select("*")
       .eq("email", email)
@@ -47,7 +47,8 @@ export const loginUser = async (req, res) => {
         token,
         nombre: hospital.nombre,
         tipo: "hospital",
-        id: hospital.id
+        id: hospital.id,
+        avatar_url: null 
       });
     }
 
@@ -70,43 +71,27 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "Faltan campos obligatorios" });
     }
 
-    // Verificar si ya existe el email en usuarios
-    const { data: existenteEmail } = await supabase
+    // Verificar email en usuarios
+    const { data: existenteEmailUsuario } = await supabase
       .from("usuarios")
       .select("id")
       .eq("email", email)
       .single();
 
-    if (existenteEmail) {
-      return res.status(409).json({ message: "Ya existe una cuenta con ese correo" });
-    }
-
-    // Verificar si ya existe el email en hospitales
-    const { data: emailEnHospital } = await supabase
+    // Verificar email en hospitales
+    const { data: existenteEmailHospital } = await supabase
       .from("hospitales")
       .select("id")
       .eq("email", email)
       .single();
 
-    if (emailEnHospital) {
+    if (existenteEmailUsuario || existenteEmailHospital) {
       return res.status(409).json({ message: "Ya existe una cuenta con ese correo" });
     }
 
-    // Verificar si ya existe el nombre
-    const { data: existenteNombre } = await supabase
-      .from("usuarios")
-      .select("id")
-      .eq("nombre", nombre)
-      .single();
-
-    if (existenteNombre) {
-      return res.status(409).json({ message: "Ese nombre de usuario ya está en uso" });
-    }
-
-    // Hashear contraseña
+    // Hashear contraseña e insertar
     const hash = await bcrypt.hash(password, 10);
 
-    // Insertar en tabla usuarios
     const { data, error } = await supabase
       .from("usuarios")
       .insert([{ nombre, email, password: hash }])
@@ -116,7 +101,7 @@ export const registerUser = async (req, res) => {
 
     const token = "token_simulado_" + data[0].id;
     res.status(201).json({
-      message: "Usuario registrado correctamente",
+      message: "Usuario registrado",
       token,
       nombre: data[0].nombre,
       tipo: "usuario",
@@ -140,32 +125,27 @@ export const registerHospital = async (req, res) => {
       return res.status(400).json({ message: "Faltan campos obligatorios" });
     }
 
-    // Verificar si ya existe el email en hospitales
-    const { data: existenteEmail } = await supabase
+    // Verificar email en hospitales
+    const { data: existenteEmailHospital } = await supabase
       .from("hospitales")
       .select("id")
       .eq("email", email)
       .single();
 
-    if (existenteEmail) {
-      return res.status(409).json({ message: "Ya existe una cuenta con ese correo" });
-    }
-
-    // Verificar si ya existe el email en usuarios
-    const { data: emailEnUsuario } = await supabase
+    // Verificar email en usuarios
+    const { data: existenteEmailUsuario } = await supabase
       .from("usuarios")
       .select("id")
       .eq("email", email)
       .single();
 
-    if (emailEnUsuario) {
+    if (existenteEmailHospital || existenteEmailUsuario) {
       return res.status(409).json({ message: "Ya existe una cuenta con ese correo" });
     }
 
-    // Hashear contraseña
+    // Hashear contraseña e insertar
     const hash = await bcrypt.hash(password, 10);
 
-    // Insertar en tabla hospitales
     const { data, error } = await supabase
       .from("hospitales")
       .insert([{ nombre, email, password: hash }])
@@ -175,7 +155,7 @@ export const registerHospital = async (req, res) => {
 
     const token = "token_simulado_" + data[0].id;
     res.status(201).json({
-      message: "Hospital registrado correctamente",
+      message: "Hospital registrado",
       token,
       nombre: data[0].nombre,
       tipo: "hospital",

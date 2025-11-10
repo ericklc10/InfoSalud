@@ -5,49 +5,35 @@ function Registro() {
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [contraseña, setContraseña] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState(""); // ✅ nuevo campo para foto de perfil
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre, email, password: contraseña }),
+        body: JSON.stringify({
+          nombre,
+          email,
+          password: contraseña,
+          avatar_url: avatarUrl, // ✅ enviar avatar al backend
+        }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        // Generar fallback de foto si no viene del backend
-        const foto =
-          data.avatar_url ||
-          `https://ui-avatars.com/api/?name=${encodeURIComponent(
-            nombre
-          )}&background=3498db&color=fff`;
-
-        const usuario = {
-          id: data.id,
-          nombre: data.nombre,
-          email: data.email || email,
-          tipo: "usuario",
-          token: data.token,
-          foto, // ✅ guardamos la foto
-        };
-
-        localStorage.setItem("usuario", JSON.stringify(usuario));
-        localStorage.setItem("token", data.token);
-
-        // 🔔 Disparar evento para que Navbar se actualice
-        window.dispatchEvent(new Event("usuarioActualizado"));
-
-        // Redirigir al home
-        window.location.href = "/";
+        // Registro exitoso → redirigir directo a login
+        window.location.href = "/login";
       } else {
-        alert(data.message || "Error al registrar");
+        setError(data.message || "Error al registrar usuario");
       }
     } catch (err) {
-      alert("No se pudo conectar con el servidor");
+      setError("No se pudo conectar con el servidor");
     }
   };
 
@@ -76,7 +62,14 @@ function Registro() {
           onChange={(e) => setContraseña(e.target.value)}
           required
         />
+        <input
+          type="url"
+          placeholder="URL del avatar (opcional)"
+          value={avatarUrl}
+          onChange={(e) => setAvatarUrl(e.target.value)}
+        />
         <button type="submit">Registrarse</button>
+        {error && <p className="error-message">{error}</p>}
       </form>
       <p>
         ¿Ya tenés cuenta? <a href="/login">Iniciar sesión</a>

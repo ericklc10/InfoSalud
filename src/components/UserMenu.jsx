@@ -13,6 +13,18 @@ function UserMenu({ nombre }) {
     setAvatarUrl(url || "");
   }, []);
 
+
+// ✅ escuchar cambios de avatar
+  useEffect(() => {
+    const actualizarAvatar = () => {
+      const url = localStorage.getItem("avatar_url");
+      setAvatarUrl(url || "");
+    };
+    window.addEventListener("avatarActualizado", actualizarAvatar);
+    return () => window.removeEventListener("avatarActualizado", actualizarAvatar);
+  }, []);
+
+
   // Cerrar el menú si se hace clic fuera
   useEffect(() => {
     const handleClickOutside = (e) => {

@@ -97,7 +97,22 @@ function EditarPerfilHospital() {
       <label>Ubicación (iframe de Google Maps)</label>
 <input
   value={ubicacion}
-  onChange={(e) => setUbicacion(e.target.value)}
+  onChange={(e) => {
+  const value = e.target.value.trim();
+
+  // Si es un iframe, extraer el src
+  if (value.startsWith("<iframe")) {
+    const match = value.match(/src="([^"]+)"/);
+    if (match && match[1]) {
+      setUbicacion(match[1]);
+    } else {
+      setUbicacion(""); // inválido
+    }
+  } else {
+    setUbicacion(value); // ya es una URL directa
+  }
+}}
+
   placeholder="https://www.google.com/maps/embed?pb=..."
   required
   className={ubicacion && !ubicacion.startsWith("https://www.google.com/maps/embed?pb=") ? "input-error" : ""}

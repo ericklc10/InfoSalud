@@ -505,11 +505,13 @@ export const buscarHospitales = async (req, res) => {
     if (errTodos) throw errTodos;
 
     const porEspecialidad = (todos || []).filter(h => {
-      const esp = Array.isArray(h.especialidades) ? h.especialidades : [];
-      return esp.some(e =>
-        String(e).toLowerCase().includes(query.toLowerCase())
-      );
-    });
+  const esp = Array.isArray(h.especialidades) ? h.especialidades : [];
+  return esp.some(e =>
+    (e.titulo && e.titulo.toLowerCase().includes(query.toLowerCase())) ||
+    (e.id && e.id.toLowerCase().includes(query.toLowerCase()))
+  );
+});
+
 
     // Unir resultados (evitar duplicados por id)
     const mapa = new Map();
@@ -519,5 +521,196 @@ export const buscarHospitales = async (req, res) => {
   } catch (err) {
     console.error("❌ Error en buscarHospitales:", err.message);
     res.status(500).json({ error: "Error en búsqueda" });
+  }
+};
+
+
+//hospitalController:
+
+// =======================
+// Puntuación Especialidades
+// =======================
+
+// Guardar o actualizar puntuación de una especialidad
+// Guardar o actualizar puntuación de una especialidad
+export const puntuarEspecialidad = async (req, res) => {
+  const { hospitalId, espKey } = req.params; // 👈 espKey ahora es el titulo
+  const { usuarioId, puntuacion } = req.body;
+
+  try {
+    const { data: existente } = await supabase
+      .from("especialidad_puntuaciones")
+      .select("*")
+      .eq("usuario_id", usuarioId)
+      .eq("hospital_id", hospitalId)
+      .eq("especialidad_key", espKey) // guarda el titulo
+      .single();
+
+    if (existente) {
+      await supabase
+        .from("especialidad_puntuaciones")
+        .update({ puntuacion, updated_at: new Date() })
+        .eq("id", existente.id);
+    } else {
+      await supabase
+        .from("especialidad_puntuaciones")
+        .insert([
+          {
+            hospital_id: hospitalId,
+            usuario_id: usuarioId,
+            especialidad_key: espKey, // 👈 titulo
+            puntuacion,
+          },
+        ]);
+    }
+
+    // calcular promedio actualizado
+    const { data: promedioData } = await supabase
+      .from("especialidad_puntuaciones")
+      .select("puntuacion")
+      .eq("hospital_id", hospitalId)
+      .eq("especialidad_key", espKey);
+
+    const promedio =
+      promedioData.reduce((acc, cur) => acc + cur.puntuacion, 0) /
+      promedioData.length;
+
+    res.json({ message: "Puntuación guardada", promedio });
+  } catch (err) {
+    console.error("Error en puntuarEspecialidad:", err);
+    res.status(500).json({ message: "Error al guardar puntuación" });
+  }
+};
+
+
+// Obtener promedio y cantidad de una especialidad
+export const obtenerPromedioEspecialidad = async (req, res) => {
+  const { hospitalId, espKey } = req.params;
+
+  try {
+    const { data } = await supabase
+      .from("especialidad_puntuaciones")
+      .select("puntuacion")
+      .eq("hospital_id", hospitalId)
+      .eq("especialidad_key", espKey);
+
+    if (!data || data.length === 0) {
+      return res.json({ promedio: null, cantidad: 0 });
+    }
+
+    const cantidad = data.length;
+    const promedio =
+      data.reduce((acc, cur) => acc + cur.puntuacion, 0) / cantidad;
+
+    res.json({ promedio, cantidad });
+  } catch (err) {
+    console.error("Error en obtenerPromedioEspecialidad:", err);
+    res.status(500).json({ message: "Error al obtener promedio" });
+  }
+};
+
+
+
+
+// GET /hospital/:hospitalId/especialidad/:espKey/puntuacion-usuario/:usuarioId
+export const obtenerPuntuacionUsuarioEspecialidad = async (req, res) => {
+  const { hospitalId, espKey, usuarioId } = req.params;
+
+  try {
+    const { data } = await supabase
+      .from("especialidad_puntuaciones")
+      .select("puntuacion")
+      .eq("hospital_id", hospitalId)
+      .eq("especialidad_key", espKey)
+      .eq("usuario_id", usuarioId)
+      .single();
+
+    if (!data) {
+      return res.json({ puntuacion: null });
+    }
+
+    res.json({ puntuacion: data.puntuacion });
+  } catch (err) {
+    res.status(500).json({ message: "Error al obtener puntuación del usuario" });
+  }
+};
+
+
+//========================================
+// Obtener especialidades destacadas (top rankeadas de todos los hospitales)
+//========================================
+export const obtenerEspecialidadesDestacadas = async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("especialidad_puntuaciones")
+      .select("hospital_id, especialidad_key, puntuacion");
+
+    if (error) throw error;
+
+    // Agrupar por hospital + especialidad
+    // Agrupar por hospital + especialidad
+const agrupadas = {};
+data.forEach((row) => {
+  const key = `${row.hospital_id}::${row.especialidad_key}`; // usar separador único "::"
+  if (!agrupadas[key]) {
+    agrupadas[key] = { total: 0, count: 0, hospitalId: row.hospital_id, espKey: row.especialidad_key };
+  }
+  agrupadas[key].total += row.puntuacion;
+  agrupadas[key].count += 1;
+});
+
+// Calcular promedio y rescatar nombres
+const resultados = await Promise.all(
+  Object.values(agrupadas).map(async (val) => {
+    const { hospitalId, espKey } = val;
+
+    // Buscar hospital
+    const { data: hospitalData } = await supabase
+      .from("hospitales")
+      .select("nombre, especialidades")
+      .eq("id", hospitalId)
+      .single();
+
+    let nombreHospital = hospitalData?.nombre || "Hospital desconocido";
+    let nombreEspecialidad = espKey;
+
+    // Parsear JSON de especialidades
+    if (hospitalData?.especialidades) {
+      let lista;
+      try {
+        lista =
+          typeof hospitalData.especialidades === "string"
+            ? JSON.parse(hospitalData.especialidades)
+            : hospitalData.especialidades;
+
+        const esp = lista.find(
+          (e) =>
+            e.id?.toLowerCase() === espKey.toLowerCase() ||
+            e.titulo?.toLowerCase() === espKey.toLowerCase()
+        );
+        if (esp) nombreEspecialidad = esp.titulo || esp.id;
+      } catch (err) {
+        console.warn("⚠️ Error parseando especialidades:", err);
+      }
+    }
+
+    return {
+      hospitalId,
+      nombreHospital,
+      espKey,
+      nombreEspecialidad,
+      promedio: val.total / val.count,
+      cantidad: val.count,
+    };
+  })
+);
+
+
+    resultados.sort((a, b) => b.promedio - a.promedio);
+
+    res.json(resultados.slice(0, 10));
+  } catch (err) {
+    console.error("Error en obtenerEspecialidadesDestacadas:", err);
+    res.status(500).json({ message: "Error al obtener especialidades destacadas" });
   }
 };

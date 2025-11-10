@@ -72,6 +72,7 @@ function EditarPerfilUsuario() {
 
       alert("Cambios guardados correctamente");
       localStorage.setItem("avatar_url", avatarUrl);
+      window.dispatchEvent(new Event("avatarActualizado"));
     } catch (err) {
       alert("Error al guardar: " + err.message);
     }

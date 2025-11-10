@@ -64,10 +64,43 @@
   margin-bottom: 1.5rem; /* 🔹 más espacio debajo del título */
 }
 
-.hospital-info {
-  margin-top: 2rem;
-  text-align: left; /* 🔹 asegura que el título "Quiénes somos" quede alineado */
+.hospital-info p {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #333;
+  text-align: left;
+  margin-bottom: 1.5rem;
+  white-space: pre-line; /* 🔹 respeta saltos de línea y espacios */
 }
+
+
+
+.hospital-map h2 {
+   font-size: 1.9rem;
+  margin-bottom: 2.5rem; /* 🔹 separa el título del mapa */
+}
+
+.hospital-map iframe {
+  border-radius: 8px;
+}
+
+
+.hospital-services{
+
+  margin-bottom: 2.5rem; /* 🔹 separa el título del mapa */
+
+}
+
+
+.hospital-contenido h2 {
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+
 
 
 /* Responsividad */
@@ -106,7 +139,9 @@
 }
 
 @media (max-width: 480px) {
-  .hospital-info h2 {
-    margin-bottom: 1rem; /* 🔹 menos espacio en móviles */
+  .hospital-info p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    padding: 0.5rem;
   }
 }

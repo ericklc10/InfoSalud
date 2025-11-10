@@ -34,7 +34,10 @@ function Footer() {
           <h4>Pacientes</h4>
           <ul>
             <li><Link to="/buscar">Buscar hospitales</Link></li>
-            <li>Especialidades</li>
+            <li>
+  <Link to="/#especialidades">Especialidades</Link>
+</li>
+
             
           </ul>
         </div>  
@@ -44,11 +47,13 @@ function Footer() {
           <h4>Síguenos</h4>
           <ul>
             
-            <li><Link to="https://www.instagram.com/ericklc110/">Instagram </Link></li>
+            
             
             <li><Link to="https://www.linkedin.com/in/erick-lc">LinkedIn </Link></li>
 
             <li><Link to="https://github.com/ericklc10">github </Link></li>
+
+            <li><Link to="https://www.instagram.com/ericklc110/">Instagram </Link></li>
 
           </ul>
         </div>

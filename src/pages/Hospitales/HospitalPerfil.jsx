@@ -17,6 +17,7 @@ function HospitalPerfil() {
   const [hospital, setHospital] = useState(null);
   const [comentarios, setComentarios] = useState([]);
   const [promedioPuntuacion, setPromedioPuntuacion] = useState(null);
+   
 
 
   // ✅ Validación robusta de localStorage
@@ -36,6 +37,9 @@ function HospitalPerfil() {
   } catch (e) {
     console.warn("⚠️ Error al parsear usuarioLogueado:", e);
   }
+
+  const puedePuntuar = !!usuarioLogueado; // solo usuarios logueados pueden puntuar
+
 
   // Extraer nombre del autor
   const nombreAutor =
@@ -120,22 +124,30 @@ fetchPromedio();
             <p>{hospital.descripcion || "Este hospital aún no ha completado su descripción."}</p>
           </section>
 
-          <section className="hospital-services">
-            <h2>Especialidades</h2>
-            {Array.isArray(hospital.especialidades) && hospital.especialidades.length > 0 ? (
-              hospital.especialidades.map((esp, index) => (
-                <EspecialidadesCard
-                  key={index}
-                  titulo={esp.titulo || esp.nombre}
-                  descripcion={esp.descripcion || "Sin descripción"}
-                  puntuacion={esp.puntuacion || 4.5}
-                  urlTurno={esp.link || esp.url}
-                />
-              ))
-            ) : (
-              <p>No se han cargado especialidades.</p>
-            )}
-          </section>
+        
+
+<section className="hospital-services">
+  <h2>Especialidades</h2>
+  {Array.isArray(hospital.especialidades) && hospital.especialidades.length > 0 ? (
+    hospital.especialidades.map((esp, index) => (
+  <EspecialidadesCard
+    key={index}
+    hospitalId={hospital.id}
+    espKey={esp.titulo} // 👈 ahora el titulo
+    titulo={esp.titulo}
+    descripcion={esp.descripcion}
+    promedioInicial={esp.promedio || 0}
+    urlTurno={esp.link}
+    usuarioId={usuarioLogueado?.id}
+    puedePuntuar={puedePuntuar}
+  />
+))
+
+  ) : (
+    <p>No se han cargado especialidades.</p>
+  )}
+</section>
+
 
           {hospital.ubicacion && (
             <section className="hospital-map">
