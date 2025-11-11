@@ -22,7 +22,7 @@ function Home() {
       link: "/registro-hospital"
     },
     {
-      img: "https://tecscience.tec.mx/es/wp-content/uploads/sites/8/2024/12/medicina-de-precision.jpg",
+      img: "https://wallpaperaccess.com/full/4433940.jpg",
       title: "Salud al alcance de todos",
       text: "Buscá hospitales por especialidad, ubicación o nombre.",
       link: "/buscar"
