@@ -1,16 +1,19 @@
-// server.js
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 import authRoutes from "./routes/authRoutes.js";
 import hospitalRoutes from "./routes/hospitalRoutes.js";
 import usuariosRoutes from "./routes/usuariosRoutes.js";
-import uploadRoutes from "./routes/uploadRoutes.js"; // ✅ Importación agregada
+import uploadRoutes from "./routes/uploadRoutes.js";
 import nodemailer from "nodemailer";
 
 dotenv.config();
 
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // ✅ Middleware base
 app.use(cors());
@@ -20,12 +23,19 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/hospital", hospitalRoutes);
 app.use("/api/usuarios", usuariosRoutes);
-app.use("/api/upload", uploadRoutes); // ✅ Ruta activa para subir imágenes
+app.use("/api/upload", uploadRoutes);
 
-// ✅ Alias sin /api (compatibilidad con frontend viejo)
+// ✅ Alias sin /api
 app.use("/auth", authRoutes);
 app.use("/hospital", hospitalRoutes);
 app.use("/usuarios", usuariosRoutes);
+
+// ✅ Servir frontend (Vite build en /dist)
+app.use(express.static(path.join(__dirname, "dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
 
 // ✅ Ruta raíz
 app.get("/", (req, res) => {
@@ -47,12 +57,4 @@ process.on("unhandledRejection", (reason) => {
   console.error("Promesa rechazada sin manejar:", reason);
 });
 
-console.log("✅ Rutas montadas: /api/auth, /api/hospital, /api/usuarios, /api/upload y alias sin /api");
-
-
-
-app.use(express.static("dist")); // o "build" si usás CRA
-
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "dist", "index.html")); // o "build"
-});
+console.log("✅ Rutas montadas y frontend servido correctamente");
