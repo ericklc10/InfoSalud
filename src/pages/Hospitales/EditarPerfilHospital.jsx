@@ -11,7 +11,7 @@ function EditarPerfilHospital() {
   const [ubicacion, setUbicacion] = useState("");
   const [especialidades, setEspecialidades] = useState([]);
   const [imagenUrl, setImagenUrl] = useState("");
-  const [mensajePortada, setMensajePortada] = useState(""); // 👈 nuevo estado para mensaje
+  const [mensajePortada, setMensajePortada] = useState("");
 
   useEffect(() => {
     if (!hospitalId) return navigate("/");
@@ -19,6 +19,8 @@ function EditarPerfilHospital() {
     const fetchHospital = async () => {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${hospitalId}`);
+        if (!res.ok) throw new Error("No se pudo cargar hospital");
+
         const data = await res.json();
         setNombre(data.nombre || "");
         setDescripcion(data.descripcion || "");
@@ -26,7 +28,7 @@ function EditarPerfilHospital() {
         setEspecialidades(data.especialidades || []);
         setImagenUrl(data.imagen_url || "");
       } catch (err) {
-        console.error("Error al cargar hospital:", err);
+        console.error("❌ Error al cargar hospital:", err);
       }
     };
 
@@ -57,7 +59,7 @@ function EditarPerfilHospital() {
     formData.append("archivo", file);
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
         method: "POST",
         body: formData,
       });
@@ -66,7 +68,7 @@ function EditarPerfilHospital() {
       if (!res.ok) throw new Error(data.message);
 
       setImagenUrl(data.url);
-      setMensajePortada("✅ Imagen de portada subida correctamente"); // 👈 mensaje en pantalla
+      setMensajePortada("✅ Imagen de portada subida correctamente");
     } catch (err) {
       console.error("❌ Error al subir portada:", err);
       setMensajePortada("❌ Error al subir portada");
@@ -181,7 +183,6 @@ function EditarPerfilHospital() {
       <label>Subir portada desde archivo</label>
       <input type="file" accept="image/*" onChange={handlePortadaFile} />
 
-      {/* 👇 Mensaje debajo del input */}
       {mensajePortada && <p className="mensaje-portada">{mensajePortada}</p>}
 
       <button className="guardar-btn" onClick={handleGuardar}>

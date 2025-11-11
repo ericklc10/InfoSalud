@@ -17,9 +17,9 @@ export const subirImagen = async (req, res) => {
     }
 
     // Nombre único para evitar colisiones
-    const nombreUnico = uuidv4() + "-" + file.originalname;
+    const nombreUnico = `${uuidv4()}-${file.originalname}`;
 
-    // Subir a Supabase Storage
+    // Subir a Supabase Storage (bucket "imagenes")
     const { error } = await supabase.storage
       .from("imagenes")
       .upload(nombreUnico, file.buffer, {
@@ -36,6 +36,10 @@ export const subirImagen = async (req, res) => {
     const { data: publicUrl } = supabase.storage
       .from("imagenes")
       .getPublicUrl(nombreUnico);
+
+    if (!publicUrl || !publicUrl.publicUrl) {
+      return res.status(500).json({ message: "No se pudo generar URL pública" });
+    }
 
     return res.status(200).json({ url: publicUrl.publicUrl });
   } catch (err) {
@@ -60,13 +64,17 @@ export const listarImagenes = async (req, res) => {
       return res.status(500).json({ message: error.message });
     }
 
+    if (!data || data.length === 0) {
+      return res.status(200).json({ urls: [] });
+    }
+
     // ✅ Generar URLs públicas con getPublicUrl
     const urls = data.map((img) => {
       const { data: publicUrl } = supabase.storage
         .from("imagenes")
         .getPublicUrl(img.name);
-      return publicUrl.publicUrl;
-    });
+      return publicUrl?.publicUrl || null;
+    }).filter(Boolean);
 
     return res.status(200).json({ urls });
   } catch (err) {

@@ -53,8 +53,8 @@ function EditarPerfilUsuario() {
     fetchSeguidos();
   }, [id, navigate]);
 
-  const handleAvatarFile = async (e) => {
-    const file = e.target.files[0];
+  // 🔧 Función genérica para subir archivos (avatar o portada)
+  const handleFileUpload = async (file, setUrl, tipo) => {
     if (!file) return;
 
     const formData = new FormData();
@@ -69,36 +69,20 @@ function EditarPerfilUsuario() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
-      setAvatarUrl(data.url);
-      alert("Avatar subido correctamente");
+      setUrl(data.url);
+      alert(`${tipo} subido correctamente`);
     } catch (err) {
-      console.error("❌ Error al subir avatar:", err);
-      alert("Error al subir avatar");
+      console.error(`❌ Error al subir ${tipo}:`, err);
+      alert(`Error al subir ${tipo}`);
     }
   };
 
-  const handlePortadaFile = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const handleAvatarFile = (e) => {
+    handleFileUpload(e.target.files[0], setAvatarUrl, "Avatar");
+  };
 
-    const formData = new FormData();
-    formData.append("archivo", file);
-
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-
-      setPortadaUrl(data.url);
-      alert("Portada subida correctamente");
-    } catch (err) {
-      console.error("❌ Error al subir portada:", err);
-      alert("Error al subir portada");
-    }
+  const handlePortadaFile = (e) => {
+    handleFileUpload(e.target.files[0], setPortadaUrl, "Portada");
   };
 
   const handleGuardar = async () => {
