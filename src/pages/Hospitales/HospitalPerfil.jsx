@@ -17,7 +17,8 @@ function HospitalPerfil() {
   const [hospital, setHospital] = useState(null);
   const [comentarios, setComentarios] = useState([]);
   const [promedioPuntuacion, setPromedioPuntuacion] = useState(null);
-   
+   const [seguidores, setSeguidores] = useState(0)
+   const [totalResenas, setTotalResenas] = useState(0);
 
 
   // ✅ Validación robusta de localStorage
@@ -52,52 +53,69 @@ function HospitalPerfil() {
   const esPropioPerfil = hospitalLogueado?.id === id;
 
   useEffect(() => {
-    const fetchHospital = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${id}`);
-        const data = await res.json();
+   const fetchHospital = async () => {
+     try {
+       const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${id}`);
+       const data = await res.json();
+ 
+       const especialidades =
+         typeof data.especialidades === "string"
+           ? JSON.parse(data.especialidades)
+           : data.especialidades;
+ 
+       let comentarios = [];
+       if (Array.isArray(data.comentarios)) {
+         comentarios = data.comentarios;
+       } else if (typeof data.comentarios === "string") {
+         try {
+           comentarios = JSON.parse(data.comentarios);
+         } catch {
+           console.warn("⚠️ Comentarios mal formateados:", data.comentarios);
+         }
+       }
+ 
+       setHospital({ ...data, especialidades, comentarios });
+     } catch (err) {
+       console.error("Error al cargar hospital:", err);
+     }
+   };
+ 
+   const fetchPromedio = async () => {
+     try {
+       const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${id}/promedio-puntuacion`);
+       const data = await res.json();
+       setPromedioPuntuacion(data.promedio || null);
+     } catch (err) {
+       console.error("Error al obtener promedio de puntuación:", err);
+     }
+   };
+  const fetchSeguidores = async () => {
+     try {
+       const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${id}/seguidores`);
+       const data = await res.json();
+       setSeguidores(data.total || 0);
+     } catch (err) {
+       console.error("Error al obtener seguidores:", err);
+     }
+   };
+  const fetchTotalResenas = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${id}/total-resenas`);
+      const data = await res.json();
+      setTotalResenas(data.total || 0);
+    } catch (err) {
+      console.error("Error al obtener total de reseñas:", err);
+    }
+  };
 
-        const especialidades =
-          typeof data.especialidades === "string"
-            ? JSON.parse(data.especialidades)
-            : data.especialidades;
-
-        let comentariosCargados = [];
-        if (Array.isArray(data.comentarios)) {
-          comentariosCargados = data.comentarios;
-        } else if (typeof data.comentarios === "string") {
-          try {
-            comentariosCargados = JSON.parse(data.comentarios);
-          } catch {
-            console.warn("⚠️ Comentarios mal formateados");
-          }
-        }
-
-        setHospital({ ...data, especialidades });
-        setComentarios(comentariosCargados);
-      } catch (err) {
-        console.error("Error al cargar hospital:", err);
-      }
-
-
-      const fetchPromedio = async () => {
-  try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${id}/promedio-puntuacion`);
-    const data = await res.json();
-    setPromedioPuntuacion(data.promedio || null);
-  } catch (err) {
-    console.error("Error al obtener promedio de puntuación:", err);
+  if (id) {
+    fetchHospital();
+    fetchPromedio();
+    fetchSeguidores();
+    fetchTotalResenas();
   }
-};
-
-fetchPromedio();
-
-
-
-    };
-
-    if (id) fetchHospital();
-  }, [id]);
+}, [id]);
+ 
 
   if (!hospital) return <p>Cargando hospital...</p>;
 
@@ -110,11 +128,13 @@ fetchPromedio();
           <HospitalHeader
   id={hospital.id}
   nombre={hospital.nombre}
-  descripcion={hospital.descripcion}
   rating={promedioPuntuacion ? promedioPuntuacion.toFixed(1) : "—"}
-  reviews={comentarios.length}
-  especialidades={hospital.especialidades}
+  reviews={totalResenas}   // 👈 ahora viene del estado
+  seguidores={seguidores}
+  onSeguidoresChange={(delta) => setSeguidores((prev) => prev + delta)}
 />
+
+
 
 
 
@@ -195,9 +215,12 @@ fetchPromedio();
           <section className="hospital-rating">
             <h2>Tu puntuación</h2>
             {!esPropioPerfil ? (
-              <PuntuacionForm hospitalId={hospital.id} 
-              onPromedioActualizado={(nuevoPromedio) => setPromedioPuntuacion(nuevoPromedio)}
-              />
+              <PuntuacionForm
+  hospitalId={hospital.id}
+  onPromedioActualizado={(nuevoPromedio) => setPromedioPuntuacion(nuevoPromedio)}
+  onTotalResenasActualizado={(nuevoTotal) => setTotalResenas(nuevoTotal)} // 👈 aquí
+/>
+
             ) : (
               <p className="comentario-bloqueado">
                 ⚠️ No puedes puntuar tu propio perfil.

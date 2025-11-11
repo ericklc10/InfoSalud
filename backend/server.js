@@ -6,6 +6,7 @@ import authRoutes from './routes/authRoutes.js';
 import hospitalRoutes from './routes/hospitalRoutes.js';
 import usuariosRoutes from './routes/usuariosRoutes.js';
 import nodemailer from 'nodemailer';
+import uploadRoutes from "./routes/uploadRoutes.js";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/hospital', hospitalRoutes);
 app.use('/api/usuarios', usuariosRoutes);
+app.use("/api", uploadRoutes);
 
 // ✅ Alias sin /api (para compatibilidad con frontend actual)
 app.use('/auth', authRoutes);

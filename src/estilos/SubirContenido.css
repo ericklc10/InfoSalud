@@ -1,0 +1,25 @@
+.subir-contenido {
+  padding: 2rem;
+  text-align: center;
+}
+
+.preview-img {
+  margin-top: 1rem;
+  max-width: 300px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.galeria {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.galeria-img {
+  width: 150px;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}

@@ -21,7 +21,8 @@ function Hospitales_cards() {
             id: h.id,
             nombre: h.nombre,
             imagen_url: h.imagen_url || "/default-banner.jpg",
-            promedio: h.promedio || 0
+            promedio: h.promedio || 0,
+            totalResenas: h.totalResenas || 0
           }));
 
         setHospitales(adaptados);
@@ -42,17 +43,16 @@ function Hospitales_cards() {
         ) : (
           hospitales.map((hospital) => (
             <Link
-              key={hospital.id}
-              to={`/hospitales/${hospital.id}`}
-              className="card"
-            >
-              <img
-                src={hospital.imagen_url}
-                alt={hospital.nombre}
-              />
-              <h3>{hospital.nombre}</h3>
-              <p>⭐ {hospital.promedio.toFixed(1)}</p>
-            </Link>
+  key={hospital.id}
+  to={`/hospitales/${hospital.id}`}
+  className="card"
+>
+  <img src={hospital.imagen_url} alt={hospital.nombre} />
+  <h3>{hospital.nombre}</h3>
+  <p>⭐ {hospital.promedio ? hospital.promedio.toFixed(1) : "—"}</p>
+  <p>({hospital.totalResenas} reseñas)</p> {/* 👈 aquí */}
+</Link>
+
           ))
         )}
       </div>

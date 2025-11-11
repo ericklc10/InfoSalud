@@ -84,7 +84,6 @@ export const obtenerHospitales = async (req, res) => {
 
 
 
-
 // =======================
 // Obtener hospitales destacados (top 4 por promedio)
 // =======================
@@ -109,7 +108,10 @@ export const obtenerHospitalesDestacados = async (req, res) => {
               puntuaciones.length
             : null;
 
-        return { ...h, promedio };
+        const totalResenas = puntuaciones ? puntuaciones.length : 0;
+
+        // 👇 devolvemos promedio y cantidad de reseñas
+        return { ...h, promedio, totalResenas };
       })
     );
 
@@ -124,6 +126,7 @@ export const obtenerHospitalesDestacados = async (req, res) => {
     res.status(500).json({ error: "Error al obtener hospitales destacados" });
   }
 };
+
 
 
 
@@ -347,6 +350,37 @@ export const obtenerPromedioPuntuacion = async (req, res) => {
 };
 
 // =======================
+// Obtener total de reseñas (puntuaciones) por hospital
+// =======================
+export const obtenerTotalResenas = async (req, res) => {
+  const { hospitalId } = req.params;
+
+  try {
+    const { count, error } = await supabase
+      .from("puntuaciones")
+      .select("*", { count: "exact", head: true })
+      .eq("hospital_id", hospitalId);
+
+    if (error) {
+      console.error("❌ Error al contar reseñas:", error.message);
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.json({ total: count });
+  } catch (err) {
+    console.error("❌ Error inesperado al contar reseñas:", err.message);
+    res.status(500).json({ error: "Error inesperado al contar reseñas" });
+  }
+};
+
+
+
+
+
+
+
+
+// =======================
 // Seguir hospital
 // =======================
 export const seguirHospital = async (req, res) => {
@@ -478,6 +512,33 @@ export const obtenerHospitalesSeguidos = async (req, res) => {
 
   res.json(hospitales);
 };
+
+///AÑADIR EN PERFIL
+export const obtenerSeguidoresHospital = async (req, res) => {
+  const { hospitalId } = req.params;
+
+  if (!hospitalId) {
+    return res.status(400).json({ error: "Falta el ID del hospital" });
+  }
+
+  const { count, error } = await supabase
+    .from("seguimientos")
+    .select("*", { count: "exact", head: true })
+    .eq("hospital_id", hospitalId);
+
+  if (error) {
+    console.error("❌ Error al contar seguidores:", error.message);
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json({ total: count });
+};
+
+
+
+
+
+
 
 
 // =======================

@@ -17,7 +17,9 @@ import {
   puntuarEspecialidad,
   obtenerPromedioEspecialidad,
    obtenerPuntuacionUsuarioEspecialidad,
-   obtenerEspecialidadesDestacadas 
+   obtenerEspecialidadesDestacadas,
+   obtenerSeguidoresHospital,
+   obtenerTotalResenas
 } from "../controllers/hospitalController.js";
 
 const router = express.Router();
@@ -36,6 +38,8 @@ router.get("/:hospitalId/especialidad/:espKey/puntuacion-usuario/:usuarioId", ob
 router.put("/:hospitalId/puntuacion-usuario", guardarPuntuacionUsuario);
 router.get("/:hospitalId/puntuacion-usuario", obtenerPuntuacionUsuario);
 router.get("/:hospitalId/promedio-puntuacion", obtenerPromedioPuntuacion);
+router.get("/:hospitalId/total-resenas", obtenerTotalResenas);
+
 
 // =======================
 // Seguimiento
@@ -44,6 +48,8 @@ router.get("/:hospitalId/seguimiento", verificarSeguimiento);
 router.post("/:hospitalId/seguir", seguirHospital);
 router.delete("/:hospitalId/seguir", dejarDeSeguirHospital);
 router.get("/seguidos/:usuario_id", obtenerHospitalesSeguidos);
+router.get("/:hospitalId/seguidores", obtenerSeguidoresHospital);
+
 
 // =======================
 // Hospitales destacados y buscador

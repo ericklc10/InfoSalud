@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import "../estilos/BotonSeguir.css"; 
+import "../estilos/BotonSeguir.css";
 
-
-function BotonSeguir({ hospitalId }) {
+function BotonSeguir({ hospitalId, onSeguidoresChange }) {
   const [siguiendo, setSiguiendo] = useState(false);
   const [usuarioId, setUsuarioId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [mensaje, setMensaje] = useState("");
 
+  // Obtener usuario logueado desde localStorage
   useEffect(() => {
     try {
       const rawUsuario = localStorage.getItem("usuario");
@@ -18,6 +18,7 @@ function BotonSeguir({ hospitalId }) {
     }
   }, []);
 
+  // Verificar si ya sigue el hospital
   useEffect(() => {
     const verificar = async () => {
       if (!usuarioId || !hospitalId) return;
@@ -37,45 +38,48 @@ function BotonSeguir({ hospitalId }) {
   }, [usuarioId, hospitalId]);
 
   const handleClick = async () => {
-  if (!usuarioId || !hospitalId || typeof hospitalId !== "string") {
-    setMensaje("ID inválido. No se puede seguir este hospital.");
-    return;
-  }
-
-  setLoading(true);
-  setMensaje("");
-
-  try {
-    const url = `${import.meta.env.VITE_API_URL}/hospital/${hospitalId}/seguir`;
-
-    const options = {
-      method: siguiendo ? "DELETE" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ usuario_id: usuarioId }),
-    };
-
-    const res = await fetch(url, options);
-
-    // Si la respuesta no es JSON, evitamos el crash
-    const contentType = res.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
-      throw new Error("Respuesta inválida del servidor");
+    if (!usuarioId || !hospitalId || typeof hospitalId !== "string") {
+      setMensaje("ID inválido. No se puede seguir este hospital.");
+      return;
     }
 
-    const data = await res.json();
+    setLoading(true);
+    setMensaje("");
 
-    if (!res.ok) throw new Error(data.error || "Error al actualizar seguimiento");
+    try {
+      const url = `${import.meta.env.VITE_API_URL}/hospital/${hospitalId}/seguir`;
 
-    setSiguiendo(!siguiendo);
-    setMensaje(data.message || "");
-  } catch (err) {
-    console.error("❌ Error al seguir/dejar de seguir:", err);
-    setMensaje("No se pudo actualizar el seguimiento.");
-  } finally {
-    setLoading(false);
-  }
-};
+      const options = {
+        method: siguiendo ? "DELETE" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ usuario_id: usuarioId }),
+      };
 
+      const res = await fetch(url, options);
+
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Respuesta inválida del servidor");
+      }
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error al actualizar seguimiento");
+
+      // Actualizamos estado local
+      setSiguiendo(!siguiendo);
+      setMensaje(data.message || "");
+
+      // 👇 Actualizamos contador en el padre
+      if (onSeguidoresChange) {
+        onSeguidoresChange(siguiendo ? -1 : +1);
+      }
+    } catch (err) {
+      console.error("❌ Error al seguir/dejar de seguir:", err);
+      setMensaje("No se pudo actualizar el seguimiento.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!usuarioId) return null;
 
@@ -86,13 +90,9 @@ function BotonSeguir({ hospitalId }) {
         onClick={handleClick}
         disabled={loading}
       >
-        {loading
-          ? "Procesando..."
-          : siguiendo
-          ? "Siguiendo"
-          : "Seguir"}
+        {loading ? "Procesando..." : siguiendo ? "Siguiendo" : "Seguir"}
       </button>
-      {mensaje && <p className="seguimiento-mensaje">{mensaje}</p>}
+      
     </div>
   );
 }

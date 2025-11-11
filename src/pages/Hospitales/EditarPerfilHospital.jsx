@@ -11,6 +11,7 @@ function EditarPerfilHospital() {
   const [ubicacion, setUbicacion] = useState("");
   const [especialidades, setEspecialidades] = useState([]);
   const [imagenUrl, setImagenUrl] = useState("");
+  const [mensajePortada, setMensajePortada] = useState(""); // 👈 nuevo estado para mensaje
 
   useEffect(() => {
     if (!hospitalId) return navigate("/");
@@ -47,42 +48,65 @@ function EditarPerfilHospital() {
     setEspecialidades(nuevas);
   };
 
-  const handleGuardar = async () => {
-  // Validación de ubicación
-  const isValidUbicacion = ubicacion.startsWith("https://www.google.com/maps/embed?pb=");
+  // 📤 Subir archivo como portada
+  const handlePortadaFile = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  if (!ubicacion || !isValidUbicacion) {
-    alert("La ubicación es obligatoria y debe ser un iframe válido de Google Maps.");
-    return;
-  }
+    const formData = new FormData();
+    formData.append("archivo", file);
 
-  const payload = {
-    nombre,
-    descripcion,
-    ubicacion,
-    imagen_url: imagenUrl,
-    especialidades
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      setImagenUrl(data.url);
+      setMensajePortada("✅ Imagen de portada subida correctamente"); // 👈 mensaje en pantalla
+    } catch (err) {
+      console.error("❌ Error al subir portada:", err);
+      setMensajePortada("❌ Error al subir portada");
+    }
   };
 
-  try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${hospitalId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+  const handleGuardar = async () => {
+    const isValidUbicacion = ubicacion.startsWith("https://www.google.com/maps/embed?pb=");
 
-    const data = await res.json();
-    if (res.ok) {
-      alert("Perfil actualizado con éxito");
-      navigate(`/hospitales/${hospitalId}`);
-    } else {
-      alert(data.message || "Error al guardar cambios");
+    if (!ubicacion || !isValidUbicacion) {
+      alert("La ubicación es obligatoria y debe ser un iframe válido de Google Maps.");
+      return;
     }
-  } catch (err) {
-    alert("Error de conexión");
-  }
-};
 
+    const payload = {
+      nombre,
+      descripcion,
+      ubicacion,
+      imagen_url: imagenUrl,
+      especialidades,
+    };
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${hospitalId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert("Perfil actualizado con éxito");
+        navigate(`/hospitales/${hospitalId}`);
+      } else {
+        alert(data.message || "Error al guardar cambios");
+      }
+    } catch (err) {
+      alert("Error de conexión");
+    }
+  };
 
   return (
     <div className="editar-perfil">
@@ -95,29 +119,29 @@ function EditarPerfilHospital() {
       <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
 
       <label>Ubicación (iframe de Google Maps)</label>
-<input
-  value={ubicacion}
-  onChange={(e) => {
-  const value = e.target.value.trim();
-
-  // Si es un iframe, extraer el src
-  if (value.startsWith("<iframe")) {
-    const match = value.match(/src="([^"]+)"/);
-    if (match && match[1]) {
-      setUbicacion(match[1]);
-    } else {
-      setUbicacion(""); // inválido
-    }
-  } else {
-    setUbicacion(value); // ya es una URL directa
-  }
-}}
-
-  placeholder="https://www.google.com/maps/embed?pb=..."
-  required
-  className={ubicacion && !ubicacion.startsWith("https://www.google.com/maps/embed?pb=") ? "input-error" : ""}
-/>
-
+      <input
+        value={ubicacion}
+        onChange={(e) => {
+          const value = e.target.value.trim();
+          if (value.startsWith("<iframe")) {
+            const match = value.match(/src="([^"]+)"/);
+            if (match && match[1]) {
+              setUbicacion(match[1]);
+            } else {
+              setUbicacion("");
+            }
+          } else {
+            setUbicacion(value);
+          }
+        }}
+        placeholder="https://www.google.com/maps/embed?pb=..."
+        required
+        className={
+          ubicacion && !ubicacion.startsWith("https://www.google.com/maps/embed?pb=")
+            ? "input-error"
+            : ""
+        }
+      />
 
       <label>Especialidades</label>
       {especialidades.map((esp, index) => (
@@ -137,10 +161,14 @@ function EditarPerfilHospital() {
             value={esp.link}
             onChange={(e) => handleChangeEspecialidad(index, "link", e.target.value)}
           />
-          <button onClick={() => handleRemoveEspecialidad(index)}>🗑️ Eliminar</button>
+          <button className="btn-eliminar" onClick={() => handleRemoveEspecialidad(index)}>
+            🗑️ Eliminar
+          </button>
         </div>
       ))}
-      <button onClick={handleAddEspecialidad}>➕ Agregar especialidad</button>
+      <button className="btn-agregar" onClick={handleAddEspecialidad}>
+        ➕ Agregar especialidad
+      </button>
 
       <label>Imagen de portada (URL)</label>
       <input
@@ -150,7 +178,15 @@ function EditarPerfilHospital() {
         placeholder="https://ejemplo.com/banner.jpg"
       />
 
-      <button className="guardar-btn" onClick={handleGuardar}>Guardar cambios</button>
+      <label>Subir portada desde archivo</label>
+      <input type="file" accept="image/*" onChange={handlePortadaFile} />
+
+      {/* 👇 Mensaje debajo del input */}
+      {mensajePortada && <p className="mensaje-portada">{mensajePortada}</p>}
+
+      <button className="guardar-btn" onClick={handleGuardar}>
+        Guardar cambios
+      </button>
     </div>
   );
 }

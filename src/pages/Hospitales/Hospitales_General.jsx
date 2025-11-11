@@ -16,7 +16,10 @@ function Hospitales_General() {
   const { id } = useParams();
   const [hospital, setHospital] = useState(null);
   const [promedioPuntuacion, setPromedioPuntuacion] = useState(null);
-   
+  const [seguidores, setSeguidores] = useState(0);
+  const [totalResenas, setTotalResenas] = useState(0);
+
+  
 
 
   let hospitalLogueado = null;
@@ -85,12 +88,33 @@ const puedePuntuar = !!usuarioLogueado; // solo usuarios logueados pueden puntua
       console.error("Error al obtener promedio de puntuación:", err);
     }
   };
+ const fetchSeguidores = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${id}/seguidores`);
+      const data = await res.json();
+      setSeguidores(data.total || 0);
+    } catch (err) {
+      console.error("Error al obtener seguidores:", err);
+    }
+  };
+
+   const fetchTotalResenas = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${id}/total-resenas`);
+      const data = await res.json();
+      setTotalResenas(data.total || 0);
+    } catch (err) {
+      console.error("Error al obtener total de reseñas:", err);
+    }
+  };
 
   if (id) {
     fetchHospital();
     fetchPromedio();
+    fetchSeguidores();
+    fetchTotalResenas();
   }
-}, [id]); // ✅ cierre correcto del useEffect
+}, [id]);
 
 
 
@@ -105,14 +129,18 @@ const puedePuntuar = !!usuarioLogueado; // solo usuarios logueados pueden puntua
 
       <main className="hospital-page">
         <div className="hospital-contenido">
-          <HospitalHeader
+         <HospitalHeader
   id={hospital.id}
   nombre={hospital.nombre}
-  descripcion={hospital.descripcion || "Sin descripción disponible"}
   rating={promedioPuntuacion ? promedioPuntuacion.toFixed(1) : "—"}
-  reviews={hospital.comentarios?.length || 0}
-  especialidades={hospital.especialidades}
+  reviews={totalResenas}   // 👈 ahora viene del estado
+  seguidores={seguidores}
+  onSeguidoresChange={(delta) => setSeguidores((prev) => prev + delta)}
 />
+
+
+
+
 
 
 
@@ -190,9 +218,12 @@ const puedePuntuar = !!usuarioLogueado; // solo usuarios logueados pueden puntua
           <section className="hospital-rating">
   <h2>Tu puntuación</h2>
   {!esPropioPerfil ? (
-    <PuntuacionForm hospitalId={hospital.id} 
-    onPromedioActualizado={(nuevoPromedio) => setPromedioPuntuacion(nuevoPromedio)}
-    />
+    <PuntuacionForm
+  hospitalId={hospital.id}
+  onPromedioActualizado={(nuevoPromedio) => setPromedioPuntuacion(nuevoPromedio)}
+  onTotalResenasActualizado={(nuevoTotal) => setTotalResenas(nuevoTotal)} // 👈 aquí
+/>
+
   ) : (
     <p className="comentario-bloqueado">
       ⚠️ Los hospitales no pueden puntuar su propio perfil.

@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../estilos/EditarPerfilUsuario.css";
-import { useParams, useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
-
+import { useParams, useNavigate, Link } from "react-router-dom";
 
 function EditarPerfilUsuario() {
   const { id } = useParams();
@@ -55,6 +53,54 @@ function EditarPerfilUsuario() {
     fetchSeguidos();
   }, [id, navigate]);
 
+  const handleAvatarFile = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("archivo", file);
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      setAvatarUrl(data.url);
+      alert("Avatar subido correctamente");
+    } catch (err) {
+      console.error("❌ Error al subir avatar:", err);
+      alert("Error al subir avatar");
+    }
+  };
+
+  const handlePortadaFile = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("archivo", file);
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      setPortadaUrl(data.url);
+      alert("Portada subida correctamente");
+    } catch (err) {
+      console.error("❌ Error al subir portada:", err);
+      alert("Error al subir portada");
+    }
+  };
+
   const handleGuardar = async () => {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/usuarios/${id}`, {
@@ -63,8 +109,8 @@ function EditarPerfilUsuario() {
         body: JSON.stringify({
           avatar_url: avatarUrl,
           portada_url: portadaUrl,
-          biografia: biografia
-        })
+          biografia: biografia,
+        }),
       });
 
       const result = await res.json();
@@ -78,50 +124,94 @@ function EditarPerfilUsuario() {
     }
   };
 
-  if (loading) return <p>Cargando perfil...</p>;
-  if (error) return <p className="error">{error}</p>;
+  if (loading) return <p className="text-center mt-4">Cargando perfil...</p>;
+  if (error) return <p className="error text-danger text-center">{error}</p>;
 
   return (
     <div className="editar-perfil-container">
-      <div className="portada" style={{ backgroundImage: `url(${portadaUrl})` }}></div>
+      {/* Portada */}
+      <div
+        className="portada mb-3 shadow-sm"
+        style={{ backgroundImage: `url(${portadaUrl})` }}
+      ></div>
+
+      {/* Info del perfil */}
       <div className="perfil-info">
-        <img src={avatarUrl} alt="Avatar" className="avatar" />
-        <h2>@{nombre}</h2>
-        <p>{biografia}</p>
+        <img src={avatarUrl} alt="Avatar" className="avatar shadow-lg" />
+        <h2 className="mt-2">@{nombre}</h2>
+        <p className="text-muted">{biografia}</p>
       </div>
 
-      <div className="formulario-edicion">
-        <label>URL del avatar</label>
-        <input type="text" value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} />
+      {/* Formulario edición */}
+      <div className="formulario-edicion card p-4 mt-4 shadow-sm">
+        <h4 className="mb-3">Editar perfil</h4>
 
-        <label>URL de portada</label>
-        <input type="text" value={portadaUrl} onChange={(e) => setPortadaUrl(e.target.value)} />
+        <label className="form-label">URL del avatar</label>
+        <input
+          type="text"
+          className="form-control"
+          value={avatarUrl}
+          onChange={(e) => setAvatarUrl(e.target.value)}
+        />
 
-        <label>Escribe tu biografía</label>
-        <textarea value={biografia} onChange={(e) => setBiografia(e.target.value)} />
+        <label className="form-label mt-3">Subir avatar desde archivo</label>
+        <input
+          type="file"
+          className="form-control"
+          accept="image/*"
+          onChange={handleAvatarFile}
+        />
 
-        <div className="botones">
-          <button onClick={() => window.history.back()}>Cancelar</button>
-          <button onClick={handleGuardar}>Guardar cambios</button>
+        <label className="form-label mt-3">URL de portada</label>
+        <input
+          type="text"
+          className="form-control"
+          value={portadaUrl}
+          onChange={(e) => setPortadaUrl(e.target.value)}
+        />
+
+        <label className="form-label mt-3">Subir portada desde archivo</label>
+        <input
+          type="file"
+          className="form-control"
+          accept="image/*"
+          onChange={handlePortadaFile}
+        />
+
+        <label className="form-label mt-3">Escribe tu biografía</label>
+        <textarea
+          className="form-control"
+          rows="3"
+          value={biografia}
+          onChange={(e) => setBiografia(e.target.value)}
+        />
+
+        <div className="botones mt-4 d-flex justify-content-between">
+          <button className="btn btn-secondary" onClick={() => window.history.back()}>
+            Cancelar
+          </button>
+          <button className="btn btn-primary" onClick={handleGuardar}>
+            Guardar cambios
+          </button>
         </div>
       </div>
 
-      <section className="hospitales-seguidos">
-        <h3>Hospitales que sigues</h3>
+      {/* Hospitales seguidos */}
+      <section className="hospitales-seguidos mt-4 card p-3 shadow-sm">
+        <h3 className="mb-3">Hospitales que sigues</h3>
         {hospitalesSeguidos.length > 0 ? (
-          <ul>
+          <ul className="list-unstyled">
             {hospitalesSeguidos.map((h) => (
               <li key={h.id}>
-  <Link to={`/hospitales/${h.id}`} className="hospital-link">
-    <img src={h.imagen_url} alt={h.nombre} />
-    <span>{h.nombre}</span>
-  </Link>
-</li>
-
+                <Link to={`/hospitales/${h.id}`} className="hospital-link">
+                  <img src={h.imagen_url} alt={h.nombre} />
+                  <span>{h.nombre}</span>
+                </Link>
+              </li>
             ))}
           </ul>
         ) : (
-          <p>No estás siguiendo ningún hospital aún.</p>
+          <p className="text-muted">No estás siguiendo ningún hospital aún.</p>
         )}
       </section>
     </div>

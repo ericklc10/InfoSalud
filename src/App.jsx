@@ -1,4 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+
+
+
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Footer from "./components/Footer";
@@ -30,11 +34,14 @@ import QuienesSomos from "./pages/QuienesSomos";
 
 import ScrollToHashElement from "./components/ScrollToHashElement";
 
+import TestSubir from "./pages/testSubir";
 
 
 
 function App() {
+ 
   return (
+    
     <Router>
       <ScrollToTop />
       <ScrollToHashElement />
@@ -70,6 +77,9 @@ function App() {
 
 
               <Route path="/quienes-somos" element={<QuienesSomos />} />
+
+              <Route path="/test-subir" element={<TestSubir />} />
+
 
                
                

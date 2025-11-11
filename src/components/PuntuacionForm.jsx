@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import PuntuacionEstrellas from "./PuntuacionEstrellas";
 import "../estilos/PuntuacionForm.css";
 
-function PuntuacionForm({ hospitalId, onPromedioActualizado }) {
+function PuntuacionForm({ hospitalId, onPromedioActualizado, onTotalResenasActualizado }) {
   let usuario = null;
 
   try {
@@ -22,6 +22,7 @@ function PuntuacionForm({ hospitalId, onPromedioActualizado }) {
   const [guardado, setGuardado] = useState(false);
   const [error, setError] = useState(null);
 
+  // ✅ Cargar puntuación del usuario
   useEffect(() => {
     const cargarPuntuacion = async () => {
       if (!usuario || !usuario.id || !hospitalId) {
@@ -46,6 +47,7 @@ function PuntuacionForm({ hospitalId, onPromedioActualizado }) {
     cargarPuntuacion();
   }, [hospitalId]);
 
+  // ✅ Guardar puntuación
   const handleGuardar = async () => {
     setError(null);
 
@@ -77,17 +79,25 @@ function PuntuacionForm({ hospitalId, onPromedioActualizado }) {
       setGuardado(true);
       setEditando(false);
 
-      // ✅ Refrescar promedio después de guardar
-      if (onPromedioActualizado) {
-        try {
-          const resProm = await fetch(
-            `${import.meta.env.VITE_API_URL}/hospital/${hospitalId}/promedio-puntuacion`
-          );
-          const dataProm = await resProm.json();
+      // ✅ Refrescar promedio y total de reseñas después de guardar
+      try {
+        const resProm = await fetch(
+          `${import.meta.env.VITE_API_URL}/hospital/${hospitalId}/promedio-puntuacion`
+        );
+        const dataProm = await resProm.json();
+        if (onPromedioActualizado) {
           onPromedioActualizado(dataProm.promedio || null);
-        } catch (err) {
-          console.warn("⚠️ No se pudo actualizar el promedio:", err);
         }
+
+        const resTotal = await fetch(
+          `${import.meta.env.VITE_API_URL}/hospital/${hospitalId}/total-resenas`
+        );
+        const dataTotal = await resTotal.json();
+        if (onTotalResenasActualizado) {
+          onTotalResenasActualizado(dataTotal.total || 0);
+        }
+      } catch (err) {
+        console.warn("⚠️ No se pudo actualizar promedio o reseñas:", err);
       }
     } catch (err) {
       console.error("❌ Error al guardar puntuación:", err);
