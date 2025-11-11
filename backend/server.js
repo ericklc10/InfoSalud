@@ -48,3 +48,11 @@ process.on("unhandledRejection", (reason) => {
 });
 
 console.log("✅ Rutas montadas: /api/auth, /api/hospital, /api/usuarios, /api/upload y alias sin /api");
+
+
+
+app.use(express.static("dist")); // o "build" si usás CRA
+
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "dist", "index.html")); // o "build"
+});
