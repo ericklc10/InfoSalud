@@ -14,6 +14,25 @@ function EditarPerfilUsuario() {
   const [error, setError] = useState("");
   const [hospitalesSeguidos, setHospitalesSeguidos] = useState([]);
 
+  // 🔄 Función reutilizable para cargar perfil
+  const fetchPerfil = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/usuarios/${id}`);
+      if (!res.ok) throw new Error("No se pudo cargar el perfil");
+
+      const data = await res.json();
+      setNombre(data.nombre || "usuario");
+      setAvatarUrl(data.avatar_url || "");
+      setPortadaUrl(data.portada_url || "");
+      setBiografia(data.biografia || "Sin biografía aún");
+    } catch (err) {
+      console.error("Error al cargar perfil:", err.message);
+      setError("No se pudo cargar el perfil");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!id || id === "null") {
       alert("No se encontró información del perfil. Iniciá sesión de nuevo.");
@@ -21,23 +40,7 @@ function EditarPerfilUsuario() {
       return;
     }
 
-    const fetchPerfil = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/usuarios/${id}`);
-        if (!res.ok) throw new Error("No se pudo cargar el perfil");
-
-        const data = await res.json();
-        setNombre(data.nombre || "usuario");
-        setAvatarUrl(data.avatar_url || "");
-        setPortadaUrl(data.portada_url || "");
-        setBiografia(data.biografia || "Sin biografía aún");
-      } catch (err) {
-        console.error("Error al cargar perfil:", err.message);
-        setError("No se pudo cargar el perfil");
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchPerfil();
 
     const fetchSeguidos = async () => {
       try {
@@ -49,12 +52,11 @@ function EditarPerfilUsuario() {
       }
     };
 
-    fetchPerfil();
     fetchSeguidos();
   }, [id, navigate]);
 
-  // 🔧 Función genérica para subir archivos (avatar o portada)
-  const handleFileUpload = async (file, setUrl, tipo) => {
+  // 📤 Subida genérica de imagen
+  const subirImagen = async (file, setUrl, tipo) => {
     if (!file) return;
 
     const formData = new FormData();
@@ -77,13 +79,8 @@ function EditarPerfilUsuario() {
     }
   };
 
-  const handleAvatarFile = (e) => {
-    handleFileUpload(e.target.files[0], setAvatarUrl, "Avatar");
-  };
-
-  const handlePortadaFile = (e) => {
-    handleFileUpload(e.target.files[0], setPortadaUrl, "Portada");
-  };
+  const handleAvatarFile = (e) => subirImagen(e.target.files[0], setAvatarUrl, "Avatar");
+  const handlePortadaFile = (e) => subirImagen(e.target.files[0], setPortadaUrl, "Portada");
 
   const handleGuardar = async () => {
     try {
@@ -103,6 +100,7 @@ function EditarPerfilUsuario() {
       alert("Cambios guardados correctamente");
       localStorage.setItem("avatar_url", avatarUrl);
       window.dispatchEvent(new Event("avatarActualizado"));
+      await fetchPerfil(); // ✅ recarga datos actualizados
     } catch (err) {
       alert("Error al guardar: " + err.message);
     }
@@ -116,7 +114,10 @@ function EditarPerfilUsuario() {
       {/* Portada */}
       <div
         className="portada mb-3 shadow-sm"
-        style={{ backgroundImage: `url(${portadaUrl})` }}
+        style={{
+          backgroundImage: portadaUrl ? `url(${portadaUrl})` : "none",
+          backgroundColor: portadaUrl ? "transparent" : "#f0f0f0",
+        }}
       ></div>
 
       {/* Info del perfil */}

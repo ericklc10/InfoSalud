@@ -18,7 +18,7 @@ function EditarPerfilHospital() {
 
     const fetchHospital = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${hospitalId}`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/hospital/${hospitalId}`);
         if (!res.ok) throw new Error("No se pudo cargar hospital");
 
         const data = await res.json();
@@ -50,7 +50,6 @@ function EditarPerfilHospital() {
     setEspecialidades(nuevas);
   };
 
-  // 📤 Subir archivo como portada
   const handlePortadaFile = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -92,7 +91,7 @@ function EditarPerfilHospital() {
     };
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/hospital/${hospitalId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/hospital/${hospitalId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

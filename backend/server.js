@@ -5,13 +5,14 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
 import hospitalRoutes from "./routes/hospitalRoutes.js";
 import usuariosRoutes from "./routes/usuariosRoutes.js";
-import uploadRoutes from "./routes/uploadRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js"; // ✅ Importación agregada
+import nodemailer from "nodemailer";
 
 dotenv.config();
 
 const app = express();
 
-// ✅ Habilitar CORS y JSON
+// ✅ Middleware base
 app.use(cors());
 app.use(express.json());
 
@@ -19,7 +20,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/hospital", hospitalRoutes);
 app.use("/api/usuarios", usuariosRoutes);
-app.use("/api/upload", uploadRoutes); // 👈 ahora queda claro
+app.use("/api/upload", uploadRoutes); // ✅ Ruta activa para subir imágenes
 
 // ✅ Alias sin /api (compatibilidad con frontend viejo)
 app.use("/auth", authRoutes);
