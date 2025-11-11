@@ -1,8 +1,14 @@
-// uploadController.js
+// controllers/uploadController.js
 import supabase from "../config/supabaseClient.js";
 import { v4 as uuidv4 } from "uuid";
 
-// 📤 Subir imagen
+/**
+ * 📤 Subir imagen a Supabase Storage
+ * - Usa multer.memoryStorage() para recibir el archivo en memoria
+ * - Genera un nombre único con uuid
+ * - Sube al bucket "imagenes"
+ * - Devuelve la URL pública
+ */
 export const subirImagen = async (req, res) => {
   try {
     const file = req.file;
@@ -13,7 +19,7 @@ export const subirImagen = async (req, res) => {
     // Nombre único para evitar colisiones
     const nombreUnico = uuidv4() + "-" + file.originalname;
 
-    // Subir a Supabase Storage (bucket "imagenes")
+    // Subir a Supabase Storage
     const { error } = await supabase.storage
       .from("imagenes")
       .upload(nombreUnico, file.buffer, {
@@ -38,7 +44,11 @@ export const subirImagen = async (req, res) => {
   }
 };
 
-// 📂 Listar imágenes
+/**
+ * 📂 Listar imágenes del bucket "imagenes"
+ * - Devuelve hasta 100 archivos
+ * - Genera URLs públicas para cada uno
+ */
 export const listarImagenes = async (req, res) => {
   try {
     const { data, error } = await supabase.storage
