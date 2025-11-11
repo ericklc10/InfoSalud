@@ -1,3 +1,5 @@
+//uploadRoutes
+
 import express from "express";
 import multer from "multer";
 import { subirImagen, listarImagenes } from "../controllers/uploadController.js";
