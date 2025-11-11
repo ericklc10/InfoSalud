@@ -1,5 +1,4 @@
-//uploadController
-
+// uploadController.js
 import supabase from "../config/supabaseClient.js";
 import { v4 as uuidv4 } from "uuid";
 
@@ -11,8 +10,10 @@ export const subirImagen = async (req, res) => {
       return res.status(400).json({ message: "No se recibió archivo" });
     }
 
+    // Nombre único para evitar colisiones
     const nombreUnico = uuidv4() + "-" + file.originalname;
 
+    // Subir a Supabase Storage (bucket "imagenes")
     const { error } = await supabase.storage
       .from("imagenes")
       .upload(nombreUnico, file.buffer, {
@@ -21,11 +22,16 @@ export const subirImagen = async (req, res) => {
       });
 
     if (error) {
+      console.error("❌ Error al subir a Supabase:", error.message);
       return res.status(500).json({ message: error.message });
     }
 
-    const url = `${process.env.SUPABASE_URL}/storage/v1/object/public/imagenes/${nombreUnico}`;
-    return res.status(200).json({ url });
+    // ✅ Obtener URL pública directamente desde Supabase
+    const { data: publicUrl } = supabase.storage
+      .from("imagenes")
+      .getPublicUrl(nombreUnico);
+
+    return res.status(200).json({ url: publicUrl.publicUrl });
   } catch (err) {
     console.error("❌ Error inesperado al subir:", err);
     return res.status(500).json({ message: "Error interno del servidor" });
@@ -40,14 +46,17 @@ export const listarImagenes = async (req, res) => {
       .list("", { limit: 100 });
 
     if (error) {
+      console.error("❌ Error al listar imágenes:", error.message);
       return res.status(500).json({ message: error.message });
     }
 
-    // Generar URLs públicas
-    const urls = data.map(
-      (img) =>
-        `${process.env.SUPABASE_URL}/storage/v1/object/public/imagenes/${img.name}`
-    );
+    // ✅ Generar URLs públicas con getPublicUrl
+    const urls = data.map((img) => {
+      const { data: publicUrl } = supabase.storage
+        .from("imagenes")
+        .getPublicUrl(img.name);
+      return publicUrl.publicUrl;
+    });
 
     return res.status(200).json({ urls });
   } catch (err) {
